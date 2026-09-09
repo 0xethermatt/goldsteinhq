@@ -48,7 +48,7 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 </div>
 
 <section class="reveal" id="reveal">
-  <div class="sectionHead"><div><h2>Your draw.</h2><p>Like it? Claim it. Want another? Reroll.</p></div><div class="seatBadge mono" id="seatNumber">SEAT #0354 · HELD</div></div>
+  <div class="sectionHead"><div><h2>Your draw.</h2><p>Like it? Claim it. Want another? Reroll.</p></div><div class="seatBadge mono" id="seatNumber">SEAT #0354</div></div>
   <article class="card revealCard">
     <div class="seatVisual"><div class="seatOrb" id="nameTag">THE VALUE BROKER</div></div>
     <div class="detail">
@@ -108,8 +108,8 @@ $('drawBtn').onclick=()=>{
   if(!connected){connected=true;$('walletState').innerHTML='<span style="color:#8fe3aa">0x71…9A3 connected · simulated</span>';$('drawBtn').textContent='Reveal my seat — free';toast('Wallet connected. Your first draw is free.');return;}
   if(!revealed){revealed=true;currentIndex=0;updateDraw();$('reveal').classList.add('show');$('drawBtn').textContent='First draw revealed';$('drawBtn').disabled=true;$('drawBtn').style.opacity='.68';$('reveal').scrollIntoView({behavior:'smooth',block:'start'});toast('Free draw revealed — nothing charged.');}
 };
-$('rerollBtn').onclick=()=>{rerolls++;currentIndex=(currentIndex+1)%draws.length;updateDraw();const seat=354+rerolls;$('seatNumber').textContent=`SEAT #${String(seat).padStart(4,'0')} · HELD`;toast(`Rerolled for ${100*Math.pow(2,rerolls-1)} $GLDSTN · simulated.`)};
-window.claimSeat=()=>{assigned++;remaining--;$('seatNumber').textContent=$('seatNumber').textContent.replace(' · HELD',' · CLAIMED');$('availableCount').textContent=remaining.toLocaleString()+' available';$('secureBtn').textContent='Claimed · 0.025 ETH';$('secureBtn').disabled=true;$('rerollBtn').disabled=true;toast('Seat claimed for 0.025 ETH · simulated.');return true;};
+$('rerollBtn').onclick=()=>{rerolls++;currentIndex=(currentIndex+1)%draws.length;updateDraw();const seat=354+rerolls;$('seatNumber').textContent=`SEAT #${String(seat).padStart(4,'0')}`;toast(`Rerolled for ${100*Math.pow(2,rerolls-1)} $GLDSTN · simulated.`)};
+window.claimSeat=()=>{assigned++;remaining--;$('availableCount').textContent=remaining.toLocaleString()+' available';$('secureBtn').textContent='Claimed · 0.025 ETH';setTimeout(()=>{$('secureBtn').disabled=true;$('rerollBtn').disabled=true},0);toast('Seat claimed for 0.025 ETH · simulated.');return true;};
 $('secureBtn').addEventListener('click',()=>window.claimSeat(),true);
 const applyFloorFilter=f=>document.querySelectorAll('.mini').forEach(card=>card.style.display=(f==='all'||card.dataset.status===f)?'block':'none');
 document.querySelectorAll('.tabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');applyFloorFilter(btn.dataset.filter)}));
