@@ -1,0 +1,53 @@
+name: Apply free-reveal UX v5
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-v5.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply-v5:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Write reviewed v5 index
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, gzip
+          payload = '''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'''
+          Path('index.html').write_bytes(gzip.decompress(base64.b64decode(payload)))
+          PY
+      - name: Validate markup and JavaScript
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text()
+          required=['First draw is free','Reveal my seat — free','Reroll · 100 $GLDSTN','Claim · 0.025 ETH','The Floor','Available seat universe','secureBtn','characterName','seatNumber','id="firm"']
+          missing=[x for x in required if x not in s]
+          if missing: raise SystemExit(f'Missing required UX markers: {missing}')
+          ids=re.findall(r'id="([^"]+)"',s)
+          dupes=sorted({x for x in ids if ids.count(x)>1})
+          if dupes: raise SystemExit(f'Duplicate IDs: {dupes}')
+          scripts=re.findall(r'<script>(.*?)</script>',s,re.S)
+          Path('/tmp/app.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/app.js
+      - name: Commit reviewed redesign
+        shell: bash
+        run: |
+          git config user.name 'Goldstein UI Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add index.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Simplify mint around free reveal and reroll game'
+          git push origin HEAD:main
