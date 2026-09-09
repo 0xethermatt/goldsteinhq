@@ -20,10 +20,16 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 @media(max-width:1050px){:root{--side:88px}.brand{justify-content:center;padding:0}.brand span,.nav a span{display:none}.nav a{text-align:center}.sideMeta{display:none}.shell{width:min(980px,calc(100% - 36px))}.focus{grid-template-columns:1fr}.focusAction{min-width:0}.floorGrid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:760px){:root{--side:0px}.sidebar{display:none}.prototype{left:0;font-size:9px;padding-inline:10px}main{margin-left:0}.shell{width:calc(100% - 24px);padding-top:12px}.hero{height:230px}.focus{padding:22px}.focus h1{font-size:40px}.focus p{font-size:15px}.flow{grid-template-columns:1fr}.revealCard{grid-template-columns:1fr}.seatVisual{border-right:0;border-bottom:1px solid var(--line);min-height:300px}.sectionHead,.floorTop{align-items:flex-start}.floorGrid{grid-template-columns:repeat(2,1fr)}.floorHint{width:100%;margin-left:0}.faqSection{margin-top:52px;padding-top:38px}.faqLayout{grid-template-columns:1fr;gap:24px}.faqIntro h2{font-size:34px}.faqIntro p{max-width:520px}}
 @media(max-width:480px){.hero{height:190px}.focus{padding:19px 17px}.focus h1{font-size:35px}.sectionHead{display:grid}.detail{padding:24px 20px}.detail h3{font-size:36px}.decision{grid-template-columns:1fr}.decisionNote{display:grid}.floorGrid{grid-template-columns:repeat(2,1fr)}.floorTools{display:grid}.tabs{width:100%}.tabs button{flex:1}.floorHint{font-size:11px}.faqIntro h2{font-size:31px}.faqList summary{padding:16px;font-size:13px}.faqAnswer{padding:0 44px 16px 16px}}
+
+/* Goldstein monolith logo lockup */
+.brand{height:78px;justify-content:center;gap:0;padding:8px 14px;overflow:hidden}
+.brandViewport{width:176px;height:58px;display:grid;place-items:center;overflow:hidden;position:relative}
+.brandLogo{display:block;width:176px;max-width:100%;height:auto;max-height:58px;object-fit:contain;filter:drop-shadow(0 5px 15px rgba(216,180,63,.12))}
+@media(max-width:1050px) and (min-width:761px){.brand{padding:0}.brandViewport{width:36px;height:52px}.brandLogo{position:absolute;width:250px;max-width:none;height:auto;max-height:none;left:-10px;top:50%;transform:translateY(-50%)}}
 </style>
 </head>
 <body>
-<aside class="sidebar"><div class="brand"><img src="/assets/goldstein-keystone.png" alt="Goldstein"><span>Goldstein</span></div><nav class="nav"><a class="active" href="#draw"><span>Reveal</span></a><a href="#firm"><span>The Floor</span></a><a href="#learn"><span>FAQ</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>
+<aside class="sidebar"><div class="brand"><div class="brandViewport"><img class="brandLogo" src="/goldstein-logo-2.png.png" alt="Goldstein Group"></div></div><nav class="nav"><a class="active" href="#draw"><span>Reveal</span></a><a href="#firm"><span>The Floor</span></a><a href="#learn"><span>FAQ</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>
 <div class="prototype mono">Prototype only — simulated wallet, reveal, rerolls and claim. No real assets or transactions.</div>
 <main><div class="shell">
 <section class="hero" aria-label="Goldstein Group — Take a Seat at the Firm"></section>

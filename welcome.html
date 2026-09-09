@@ -23,6 +23,12 @@ button{font:inherit}#appFrame{position:fixed;inset:0;width:100%;height:100%;bord
 .controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;padding:20px 22px 22px}.controlCopy b{display:block;margin-bottom:4px;font-size:15px}.controlCopy span{display:block;color:#8f8672;font-size:12px;line-height:1.45}.actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.btn{height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 16px;border-radius:10px;border:1px solid #3d351f;background:#19160e;color:#e6ddc5;font-size:13px;font-weight:800;cursor:pointer;transition:.15s ease}.btn:hover{transform:translateY(-1px);background:#1f1b10}.btn.primary{border-color:#f0cb45;background:linear-gradient(#f4d153,#dcb227);color:#140f02}.btn.x{background:#f1eee6;color:#0b0b09;border-color:#f1eee6}.btn .xMark{font-size:15px}.close{position:absolute;z-index:6;top:34px;right:34px;width:42px;height:42px;border-radius:11px;border:1px solid rgba(215,180,63,.28);background:rgba(13,12,8,.72);backdrop-filter:blur(8px);color:#ded4ba;font-size:20px;cursor:pointer}.close:hover{background:#1b180f}.toast{position:fixed;z-index:10001;left:50%;bottom:24px;transform:translate(-50%,10px);opacity:0;pointer-events:none;padding:11px 14px;border:1px solid #4c401d;border-radius:10px;background:#15130c;color:#ddd3b6;font-size:12px;transition:.18s}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:900px){.modal{padding:12px}.shell{width:min(720px,calc(100vw - 20px));max-height:calc(100vh - 20px)}.shareCard{aspect-ratio:auto;min-height:720px;background-position:60% center}.shareCard:before{background:linear-gradient(180deg,rgba(6,6,4,.34),rgba(6,6,4,.91) 48%,rgba(6,6,4,.97))}.cardGrid{grid-template-columns:1fr;align-content:center;padding:92px 34px 55px;gap:28px}.nftFrame{width:260px}.copyBlock{text-align:center}.identityStrip{justify-content:center}.motto{display:none}.controls{grid-template-columns:1fr}.controlCopy{text-align:center}.actions{justify-content:center}.close{top:24px;right:24px}}
 @media(max-width:520px){.shareCard{min-height:670px}.shareCard:after{inset:10px}.brandLock{left:24px;top:24px}.brandLock b,.brandLock span{display:none}.brandLock img{width:34px;height:34px}.cardGrid{padding:76px 22px 38px;gap:22px}.nftFrame{width:220px;border-radius:18px}.nftInner{padding:20px}.copyBlock h1{font-size:38px}.copyBlock .sub{font-size:14px}.identityStrip{margin-top:16px}.chip{font-size:11px}.controls{padding:16px}.controlCopy{display:none}.actions{display:grid;grid-template-columns:1fr 1fr;width:100%}.btn{width:100%;padding:0 10px}.actions .primary{grid-column:1/-1}.close{top:20px;right:20px;width:38px;height:38px}}
+
+/* Goldstein monolith logo lockup */
+.brandLock{left:34px;top:24px;gap:0}
+.brandLock img{width:220px;height:auto;max-height:74px;object-fit:contain;filter:drop-shadow(0 5px 18px rgba(0,0,0,.34))}
+.nftPlaceholder img{width:170px;height:auto;max-height:72px;margin:0 auto 18px;object-fit:contain;opacity:1}
+@media(max-width:520px){.brandLock{left:20px;top:18px}.brandLock img{width:168px;height:auto;max-height:58px}.nftPlaceholder img{width:145px;height:auto;max-height:62px}}
 </style>
 </head>
 <body>
@@ -31,14 +37,14 @@ button{font:inherit}#appFrame{position:fixed;inset:0;width:100%;height:100%;bord
   <section class="shell" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
     <div class="shareCard" id="shareCard">
       <button class="close" id="closeBtn" aria-label="Close">×</button>
-      <div class="brandLock"><img src="/assets/goldstein-keystone.png" alt=""><div><b>Goldstein Group</b><span>Onchain investment products</span></div></div>
+      <div class="brandLock"><img src="/goldstein-logo-2.png.png" alt="Goldstein Group"></div>
       <div class="cardGrid">
         <div class="nftWrap">
           <div class="nftFrame">
             <div class="nftInner" id="nftInner">
               <img id="nftImage" alt="Minted Goldstein NFT">
               <div class="nftPlaceholder" id="nftPlaceholder">
-                <img src="/assets/goldstein-keystone.png" alt="">
+                <img src="/goldstein-logo-2.png.png" alt="Goldstein Group">
                 <small>Minted NFT</small>
                 <strong id="nftIdentity">Your Goldstein Seat</strong>
                 <span>Artwork placeholder. The final minted NFT will render here automatically.</span>
@@ -106,8 +112,7 @@ async function renderShareCard(){
   const hero=await loadImage('/assets/goldstein-hero.webp');cover(ctx,hero,0,0,1600,900);
   const grd=ctx.createLinearGradient(0,0,1250,0);grd.addColorStop(0,'rgba(5,5,3,.95)');grd.addColorStop(.48,'rgba(5,5,3,.72)');grd.addColorStop(1,'rgba(5,5,3,.28)');ctx.fillStyle=grd;ctx.fillRect(0,0,1600,900);
   ctx.strokeStyle='rgba(224,185,54,.5)';ctx.lineWidth=2;rounded(ctx,34,34,1532,832,24);ctx.stroke();
-  try{const logo=await loadImage('/assets/goldstein-keystone.png');ctx.drawImage(logo,74,66,70,70)}catch{}
-  ctx.fillStyle='#f4f1e8';ctx.font='700 34px Arial';ctx.fillText('GOLDSTEIN GROUP',162,98);ctx.fillStyle='#c8b981';ctx.font='700 17px monospace';ctx.fillText('ONCHAIN INVESTMENT PRODUCTS',162,127);
+  try{const logo=await loadImage('/goldstein-logo-2.png.png');ctx.drawImage(logo,72,54,330,110)}catch{}
   const nx=90,ny=210,nw=430,nh=540;ctx.fillStyle='rgba(14,13,9,.9)';rounded(ctx,nx,ny,nw,nh,26);ctx.fill();ctx.strokeStyle='rgba(235,194,61,.62)';ctx.lineWidth=3;ctx.stroke();
   if(state.nftUrl){try{const nft=await loadImage(state.nftUrl);ctx.save();rounded(ctx,nx+12,ny+12,nw-24,nh-24,18);ctx.clip();cover(ctx,nft,nx+12,ny+12,nw-24,nh-24);ctx.restore()}catch{drawPlaceholder(ctx,nx,ny,nw,nh)}}else{drawPlaceholder(ctx,nx,ny,nw,nh)}
   ctx.fillStyle='rgba(8,8,5,.88)';rounded(ctx,nx+24,ny+nh-72,nw-48,48,10);ctx.fill();ctx.fillStyle='#efca47';ctx.font='800 18px monospace';ctx.fillText('SEAT '+normalizeSeat(state.seat),nx+42,ny+nh-41);ctx.fillStyle='#d4c9ab';ctx.textAlign='right';ctx.fillText('SECURED',nx+nw-42,ny+nh-41);ctx.textAlign='left';
