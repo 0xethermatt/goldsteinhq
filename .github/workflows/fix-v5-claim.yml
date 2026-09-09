@@ -1,0 +1,50 @@
+name: Harden v5 claim handoff
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-v5-claim.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Patch claim handoff
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          s=s.replace('id="seatNumber">SEAT #0354 · HELD</div>', 'id="seatNumber">SEAT #0354</div>')
+          s=s.replace("$('seatNumber').textContent=`SEAT #${String(seat).padStart(4,'0')} · HELD`;", "$('seatNumber').textContent=`SEAT #${String(seat).padStart(4,'0')}`;")
+          old="window.claimSeat=()=>{assigned++;remaining--;$('seatNumber').textContent=$('seatNumber').textContent.replace(' · HELD',' · CLAIMED');$('availableCount').textContent=remaining.toLocaleString()+' available';$('secureBtn').textContent='Claimed · 0.025 ETH';$('secureBtn').disabled=true;$('rerollBtn').disabled=true;toast('Seat claimed for 0.025 ETH · simulated.');return true;};"
+          new="window.claimSeat=()=>{assigned++;remaining--;$('availableCount').textContent=remaining.toLocaleString()+' available';$('secureBtn').textContent='Claimed · 0.025 ETH';setTimeout(()=>{$('secureBtn').disabled=true;$('rerollBtn').disabled=true},0);toast('Seat claimed for 0.025 ETH · simulated.');return true;};"
+          if old not in s: raise SystemExit('Expected claim handler not found')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text()
+          if ' · HELD' in re.search(r'id="seatNumber">(.*?)</div>',s).group(1): raise SystemExit('Seat badge suffix still present')
+          scripts=re.findall(r'<script>(.*?)</script>',s,re.S)
+          Path('/tmp/app.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/app.js
+      - name: Commit fix
+        shell: bash
+        run: |
+          git config user.name 'Goldstein UI Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Harden claim and welcome handoff'
+          git push origin HEAD:main
