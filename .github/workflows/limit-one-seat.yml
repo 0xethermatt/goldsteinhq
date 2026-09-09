@@ -1,0 +1,55 @@
+name: Enforce one-seat mint limit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/limit-one-seat.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-mint-limit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Limit public mint to one seat per transaction
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text()
+
+          old_controls = '''<div class="controls"><div class="field"><label class="mono">Quantity</label><div class="qty"><button id="minus">−</button><output id="qty">1</output><button id="plus">+</button></div></div><div class="field"><label class="mono">Total</label><div class="total" id="total">0.025 ETH</div></div><div class="field"><label class="mono">Action</label><button class="btn primary" id="mintBtn">Connect wallet</button></div></div>'''
+          new_controls = '''<div class="controls"><div class="field"><label class="mono">Mint limit</label><div class="total">1 seat / tx</div></div><div class="field"><label class="mono">Total</label><div class="total" id="total">0.025 ETH</div></div><div class="field"><label class="mono">Action</label><button class="btn primary" id="mintBtn">Connect wallet</button></div></div>'''
+          if old_controls not in s:
+              raise SystemExit('Expected mint controls block not found; refusing to modify the page.')
+          s = s.replace(old_controls, new_controls, 1)
+          s = s.replace('Max 5 seats / tx', '1 seat / tx')
+          s = s.replace('Choose 1–5 public seats.', 'Mint one public seat per transaction.')
+
+          old_js = "const update=()=>{$('qty').textContent=q;$('total').textContent=(.025*q).toFixed(3).replace(/0+$/,'').replace(/\\.$/,'')+' ETH';if(connected)$('mintBtn').textContent=`Mint ${q} seat${q>1?'s':''}`};$('minus').onclick=()=>{q=Math.max(1,q-1);update()};$('plus').onclick=()=>{q=Math.min(5,q+1);update()};"
+          new_js = "const update=()=>{$('total').textContent='0.025 ETH';if(connected)$('mintBtn').textContent='Mint 1 seat'};"
+          if old_js not in s:
+              raise SystemExit('Expected quantity JavaScript not found; refusing to modify the page.')
+          s = s.replace(old_js, new_js, 1)
+
+          p.write_text(s)
+          PY
+
+      - name: Commit change
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo 'No changes required.'
+            exit 0
+          fi
+          git config user.name 'Goldstein UI Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Limit public mint to one seat per transaction'
+          git push origin HEAD:main
