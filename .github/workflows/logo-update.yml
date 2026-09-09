@@ -1,0 +1,38 @@
+name: Apply monolith logo
+
+on:
+  push:
+    paths:
+      - 'scripts/apply_logo_update.py'
+      - '.github/workflows/logo-update.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply-logo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply logo update
+        run: python3 scripts/apply_logo_update.py
+      - name: Validate logo integration
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          idx=Path('index.html').read_text()
+          wel=Path('welcome.html').read_text()
+          assert '/goldstein-logo-2.png.png' in idx
+          assert '/goldstein-logo-2.png.png' in wel
+          assert 'brandViewport' in idx
+          assert 'What happens after I claim a Seat?' in idx
+          assert 'secureBtn' in idx and 'seatNumber' in idx and 'characterName' in idx
+          print('Monolith logo validation passed')
+          PY
+      - name: Commit logo integration
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html welcome.html
+          git commit -m "Implement monolith logo across site"
+          git push
