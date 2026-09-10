@@ -53,6 +53,19 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .fundIdentityLogo{position:relative;overflow:hidden;background:#020202!important;border-color:#51441f!important;box-shadow:0 10px 28px rgba(0,0,0,.28)!important}
 .fundIdentityLogo img{position:absolute!important;left:50%;top:50%;width:132%!important;height:132%!important;max-width:none;transform:translate(-50%,-50%);object-fit:cover!important;object-position:center}
 
+
+/* Performance chart spacing v1 */
+.mainGrid{align-items:stretch}
+.chartCard{display:flex;flex-direction:column;min-height:100%}
+.chartCard .cardTitle{flex:0 0 auto}
+.chartCard .chart{flex:1 1 auto;height:auto;min-height:360px}
+@media(max-width:1050px){
+  .chartCard{min-height:auto}
+  .chartCard .chart{height:285px;min-height:285px;flex:none}
+}
+@media(max-width:760px){
+  .chartCard .chart{height:235px;min-height:235px}
+}
 </style>
 </head>
 <body>
