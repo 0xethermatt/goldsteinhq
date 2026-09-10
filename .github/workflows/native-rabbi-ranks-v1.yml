@@ -1,0 +1,149 @@
+name: Integrate native Rabbi Schlomo rank artwork
+
+on:
+  push:
+    paths:
+      - '.github/workflows/native-rabbi-ranks-v1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Replace sprite placeholders with native NFT rank assets
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          rank_css = r'''
+/* Native Rabbi Schlomo Goldstein rank artwork v1 */
+.rankArtwork{
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  background-color:#0a0a07!important;
+}
+.rank-base{background-image:url('/18.png')!important}
+.rank-intern{background-image:url('/2_intern.png')!important}
+.rank-analyst{background-image:url('/3_analyst.png')!important}
+.rank-associate{background-image:url('/4_associate.png')!important}
+.rank-vp{background-image:url('/5_vp.png')!important}
+.rank-md{background-image:url('/6_md.png')!important}
+.rank-partner{background-image:url('/7_partner.png')!important}
+'''
+
+          def inject_css(path):
+              p=Path(path); s=p.read_text()
+              s=s.replace('<link rel="stylesheet" href="/assets/rank-sprite.css" />\n','')
+              if '/* Native Rabbi Schlomo Goldstein rank artwork v1 */' not in s:
+                  s=s.replace('</style>', rank_css+'\n</style>', 1)
+              p.write_text(s)
+
+          # --- My Seat ---
+          p=Path('my-seat.html'); s=p.read_text()
+          old_rail='''    <div class="rankRail" id="rankRail" aria-label="Seat rank preview">\n      <button class="rankThumb" data-rank="0"><span class="rankArtwork rank-intern"></span><b>Intern</b></button>\n      <button class="rankThumb" data-rank="1"><span class="rankArtwork rank-analyst"></span><b>Analyst</b></button>\n      <button class="rankThumb" data-rank="2"><span class="rankArtwork rank-associate"></span><b>Associate</b></button>\n      <button class="rankThumb" data-rank="3"><span class="rankArtwork rank-vp"></span><b>VP</b></button>\n      <button class="rankThumb" data-rank="4"><span class="rankArtwork rank-md"></span><b>MD</b></button>\n      <button class="rankThumb" data-rank="5"><span class="rankArtwork rank-partner"></span><b>Partner</b></button>\n    </div>'''
+          new_rail='''    <div class="rankRail" id="rankRail" aria-label="Seat evolution preview">\n      <button class="rankThumb" data-rank="-1"><span class="rankArtwork rank-base"></span><b>Seat</b></button>\n      <button class="rankThumb" data-rank="0"><span class="rankArtwork rank-intern"></span><b>Intern</b></button>\n      <button class="rankThumb" data-rank="1"><span class="rankArtwork rank-analyst"></span><b>Analyst</b></button>\n      <button class="rankThumb" data-rank="2"><span class="rankArtwork rank-associate"></span><b>Associate</b></button>\n      <button class="rankThumb" data-rank="3"><span class="rankArtwork rank-vp"></span><b>VP</b></button>\n      <button class="rankThumb" data-rank="4"><span class="rankArtwork rank-md"></span><b>MD</b></button>\n      <button class="rankThumb" data-rank="5"><span class="rankArtwork rank-partner"></span><b>Partner</b></button>\n    </div>'''
+          if old_rail not in s: raise SystemExit('My Seat rank rail anchor not found')
+          s=s.replace(old_rail,new_rail,1)
+          s=s.replace('.rankRail{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,1fr);', '.rankRail{grid-column:1/-1;display:grid;grid-template-columns:repeat(7,1fr);',1)
+
+          old_ranks="""const ranks=[\n  {key:'intern',label:'Intern',min:0,next:1000,capacity:1},\n  {key:'analyst',label:'Analyst',min:1000,next:5000,capacity:2},\n  {key:'associate',label:'Associate',min:5000,next:15000,capacity:3},\n  {key:'vp',label:'VP',min:15000,next:40000,capacity:5},\n  {key:'md',label:'MD',min:40000,next:100000,capacity:8},\n  {key:'partner',label:'Partner',min:100000,next:null,capacity:12}\n];"""
+          new_ranks="""const baseSeat={key:'base',label:'Seat'};\nconst ranks=[\n  {key:'intern',label:'Intern',min:0,next:1000,capacity:1},\n  {key:'analyst',label:'Analyst',min:1000,next:5000,capacity:2},\n  {key:'associate',label:'Associate',min:5000,next:15000,capacity:3},\n  {key:'vp',label:'VP',min:15000,next:40000,capacity:5},\n  {key:'md',label:'MD',min:40000,next:100000,capacity:8},\n  {key:'partner',label:'Partner',min:100000,next:null,capacity:12}\n];"""
+          if old_ranks not in s: raise SystemExit('My Seat ranks anchor not found')
+          s=s.replace(old_ranks,new_ranks,1)
+
+          old_visual="""function setVisualRank(i,preview=false){\n  const r=ranks[i],art=$('rankArt');\n  art.classList.add('changing');\n  setTimeout(()=>{art.className=`rankArtwork rank-${r.key} rankSeatArt`;},90);\n  setTimeout(()=>art.classList.remove('changing'),220);\n  $('visualRank').textContent=r.label;\n  $('rankCue').textContent=preview?`Preview · ${r.label}`:'Rank follows staked $GLDSTN';\n  document.querySelectorAll('.rankThumb').forEach((b,x)=>b.classList.toggle('active',x===i));\n}"""
+          new_visual="""function setVisualRank(i,preview=false){\n  const r=i<0?baseSeat:ranks[i],art=$('rankArt');\n  art.classList.add('changing');\n  setTimeout(()=>{art.className=`rankArtwork rank-${r.key} rankSeatArt`;},90);\n  setTimeout(()=>art.classList.remove('changing'),240);\n  $('visualRank').textContent=r.label;\n  $('rankCue').textContent=i<0?'Original Seat artwork':(preview?`Preview · ${r.label}`:'Rank follows staked $GLDSTN');\n  document.querySelectorAll('.rankThumb').forEach(b=>b.classList.toggle('active',Number(b.dataset.rank)===i));\n}"""
+          if old_visual not in s: raise SystemExit('My Seat setVisualRank anchor not found')
+          s=s.replace(old_visual,new_visual,1)
+
+          old_play="""function playRanks(){\n  clearInterval(previewTimer);clearTimeout(previewReturn);previewReturn=null;\n  let i=0;setVisualRank(i,true);\n  previewTimer=setInterval(()=>{\n    i++;\n    if(i>=ranks.length){"""
+          new_play="""function playRanks(){\n  clearInterval(previewTimer);clearTimeout(previewReturn);previewReturn=null;\n  let i=-1;setVisualRank(i,true);\n  previewTimer=setInterval(()=>{\n    i++;\n    if(i>=ranks.length){"""
+          if old_play not in s: raise SystemExit('My Seat playRanks anchor not found')
+          s=s.replace(old_play,new_play,1)
+
+          old_click="document.querySelectorAll('.rankThumb').forEach((b,i)=>b.onclick=()=>previewRank(i));"
+          new_click="document.querySelectorAll('.rankThumb').forEach(b=>b.onclick=()=>previewRank(Number(b.dataset.rank)));"
+          if old_click not in s: raise SystemExit('My Seat rank click anchor not found')
+          s=s.replace(old_click,new_click,1)
+          p.write_text(s)
+          inject_css('my-seat.html')
+
+          # --- Mint / reveal page ---
+          p=Path('app.html'); s=p.read_text()
+          old_art='<div class="seatOrb rankArtwork rank-intern mintSeatArt" id="nameTag" role="img" aria-label="Rabbi Schlomo Goldstein rank artwork"></div>'
+          new_art='<div class="seatOrb rankArtwork rank-base mintSeatArt" id="nameTag" role="img" aria-label="Rabbi Schlomo Goldstein Seat evolution artwork"></div>'
+          if old_art not in s: raise SystemExit('Mint art anchor not found')
+          s=s.replace(old_art,new_art,1)
+
+          old_strip='''        <button class="mintRankChip active" data-mint-rank="0">Intern</button><button class="mintRankChip" data-mint-rank="1">Analyst</button><button class="mintRankChip" data-mint-rank="2">Associate</button><button class="mintRankChip" data-mint-rank="3">VP</button><button class="mintRankChip" data-mint-rank="4">MD</button><button class="mintRankChip" data-mint-rank="5">Partner</button>'''
+          new_strip='''        <button class="mintRankChip active" data-mint-rank="0">Seat</button><button class="mintRankChip" data-mint-rank="1">Intern</button><button class="mintRankChip" data-mint-rank="2">Analyst</button><button class="mintRankChip" data-mint-rank="3">Associate</button><button class="mintRankChip" data-mint-rank="4">VP</button><button class="mintRankChip" data-mint-rank="5">MD</button><button class="mintRankChip" data-mint-rank="6">Partner</button>'''
+          if old_strip not in s: raise SystemExit('Mint rank strip anchor not found')
+          s=s.replace(old_strip,new_strip,1)
+          s=s.replace('<strong id="mintRankName">Intern</strong>', '<strong id="mintRankName">Seat</strong>',1)
+          s=s.replace('.mintRankStrip{width:min(282px,100%);display:grid;grid-template-columns:repeat(3,1fr);', '.mintRankStrip{width:min(320px,100%);display:grid;grid-template-columns:repeat(4,1fr);',1)
+
+          old_mr="const mintRanks=[['intern','Intern'],['analyst','Analyst'],['associate','Associate'],['vp','VP'],['md','MD'],['partner','Partner']];let mintPreviewTimer=null,mintReturn=null;"
+          new_mr="const mintRanks=[['base','Seat'],['intern','Intern'],['analyst','Analyst'],['associate','Associate'],['vp','VP'],['md','MD'],['partner','Partner']];let mintPreviewTimer=null,mintReturn=null;"
+          if old_mr not in s: raise SystemExit('Mint ranks array anchor not found')
+          s=s.replace(old_mr,new_mr,1)
+          s=s.replace("mintReturn=setTimeout(()=>{setMintRank(0);mintReturn=null},450)","mintReturn=setTimeout(()=>{setMintRank(1);mintReturn=null},520)",1)
+          old_update="if(p[3]){art.className='seatOrb rankArtwork rank-intern mintSeatArt';art.textContent='';$('mintArtWrap').classList.remove('fallbackMode');$('mintRankStrip').style.display='grid';$('mintRankHint').style.display='block';$('mintRankName').textContent='Intern';document.querySelectorAll('.mintRankChip').forEach((b,x)=>b.classList.toggle('active',x===0));}"
+          new_update="if(p[3]){art.className='seatOrb rankArtwork rank-base mintSeatArt';art.textContent='';$('mintArtWrap').classList.remove('fallbackMode');$('mintRankStrip').style.display='grid';$('mintRankHint').style.display='block';$('mintRankName').textContent='Seat';document.querySelectorAll('.mintRankChip').forEach((b,x)=>b.classList.toggle('active',x===0));}"
+          if old_update not in s: raise SystemExit('Mint updateDraw rank anchor not found')
+          s=s.replace(old_update,new_update,1)
+          old_handler="document.querySelectorAll('.mintRankChip').forEach((b,i)=>b.addEventListener('click',()=>{stopMintPreview();setMintRank(i);mintReturn=setTimeout(()=>{setMintRank(0);mintReturn=null},1200)}));"
+          new_handler="document.querySelectorAll('.mintRankChip').forEach((b,i)=>b.addEventListener('click',()=>{stopMintPreview();setMintRank(i);mintReturn=setTimeout(()=>{setMintRank(1);mintReturn=null},1500)}));"
+          if old_handler not in s: raise SystemExit('Mint rank click anchor not found')
+          s=s.replace(old_handler,new_handler,1)
+          s=s.replace("setMintRank(i)},560)","setMintRank(i)},760)",1)
+          p.write_text(s)
+          inject_css('app.html')
+
+          # --- Welcome / claim handoff: use the same native rank art in modal + exported share card ---
+          p=Path('welcome.html'); s=p.read_text()
+          old_draw="""async function drawRankArtwork(ctx,x,y,w,h,key){\n  const el=$('nftRankArt'),bg=getComputedStyle(el).backgroundImage,m=bg.match(/url\\([\\\"']?(data:image\\/[^\\\"')]+)[\\\"']?\\)/);if(!m)throw new Error('Rank art unavailable');\n  const sprite=await loadImage(m[1]);const xs={intern:65,analyst:245,associate:420,vp:594,md:772,partner:946};const sx=xs[key]??65,sy=30,sw=170,sh=170;ctx.drawImage(sprite,sx,sy,sw,sh,x,y,w,h);\n}"""
+          new_draw="""async function drawRankArtwork(ctx,x,y,w,h,key){\n  const files={base:'/18.png',intern:'/2_intern.png',analyst:'/3_analyst.png',associate:'/4_associate.png',vp:'/5_vp.png',md:'/6_md.png',partner:'/7_partner.png'};\n  const art=await loadImage(files[key]||files.intern);cover(ctx,art,x,y,w,h);\n}"""
+          if old_draw not in s: raise SystemExit('Welcome drawRankArtwork anchor not found')
+          s=s.replace(old_draw,new_draw,1)
+          p.write_text(s)
+          inject_css('welcome.html')
+
+          # Preload hints: native files are large, so preload the first two visible states.
+          for path in ('my-seat.html','app.html'):
+              p=Path(path); s=p.read_text()
+              marker='<meta name="theme-color" content="#080806" />'
+              preload='''<link rel="preload" href="/18.png" as="image" />\n<link rel="preload" href="/2_intern.png" as="image" />'''
+              if preload not in s:
+                  s=s.replace(marker,marker+'\n'+preload,1)
+              p.write_text(s)
+          PY
+
+      - name: Validate integration
+        run: |
+          for f in 18.png 2_intern.png 3_analyst.png 4_associate.png 5_vp.png 6_md.png 7_partner.png; do test -f "$f" || { echo "Missing $f"; exit 1; }; done
+          grep -q "rank-base{background-image:url('/18.png')" my-seat.html
+          grep -q "rank-partner{background-image:url('/7_partner.png')" my-seat.html
+          grep -q 'data-rank="-1"' my-seat.html
+          grep -q "const baseSeat={key:'base',label:'Seat'}" my-seat.html
+          grep -q "const mintRanks=\[\['base','Seat'\]" app.html
+          grep -q 'data-mint-rank="6">Partner' app.html
+          grep -q "partner:'/7_partner.png'" welcome.html
+          ! grep -q '/assets/rank-sprite.css' app.html
+          ! grep -q '/assets/rank-sprite.css' my-seat.html
+          ! grep -q '/assets/rank-sprite.css' welcome.html
+          node -e "const fs=require('fs'),vm=require('vm'); for(const f of ['app.html','my-seat.html','welcome.html']){const s=fs.readFileSync(f,'utf8');const scripts=[...s.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)].map(x=>x[1]);for(const js of scripts)new vm.Script(js,{filename:f});} console.log('JS syntax OK')"
+
+      - name: Commit
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add app.html my-seat.html welcome.html
+          git commit -m "Use native Rabbi Schlomo rank artwork" || exit 0
+          git push
