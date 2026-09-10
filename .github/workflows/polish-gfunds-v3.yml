@@ -1,0 +1,47 @@
+name: Polish G-Funds v3
+
+on:
+  push:
+    paths:
+      - '.github/workflows/polish-gfunds-v3.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Apply G-Funds design polish
+        run: python3 scripts/polish_gfunds_v3.py
+      - name: Validate required content
+        run: |
+          grep -q 'Seat B10 · House Manager' fund-detail.html
+          grep -q 'Seat B17 · House Manager' fund-detail.html
+          grep -q 'Index composition' fund-detail.html
+          grep -q 'Agent role' fund-detail.html
+          grep -q 'Illustrative equal-weight view' fund-detail.html
+          grep -q 'G-Funds visual balance v3' funds.html
+      - name: JavaScript syntax check
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess, tempfile
+          for name in ['fund-detail.html','funds.html']:
+              s=Path(name).read_text()
+              blocks=re.findall(r'<script>(.*?)</script>',s,re.S)
+              for i,b in enumerate(blocks):
+                  f=tempfile.NamedTemporaryFile('w',suffix='.js',delete=False)
+                  f.write(b); f.close()
+                  subprocess.run(['node','--check',f.name],check=True)
+          PY
+      - name: Commit polished G-Funds
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add funds.html fund-detail.html
+          git commit -m "Polish G-Fund detail and overview UX" || exit 0
+          git push
