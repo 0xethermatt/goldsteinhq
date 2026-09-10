@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="stylesheet" href="/assets/rank-sprite.css" />
 <title>Goldstein Group</title>
 <style>
 :root{--bg:#080806;--panel:#11100b;--panel2:#0d0c09;--line:#342d1b;--gold:#e0b936;--gold2:#f2cf4b;--text:#f4f1e8;--muted:#a79d88;--soft:#766e5e;--green:#8fe3aa}
@@ -40,6 +39,22 @@ button{font:inherit}#appFrame{position:fixed;inset:0;width:100%;height:100%;bord
 
 /* Site-wide type floor v4 */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+
+
+/* Native Rabbi Schlomo Goldstein rank artwork v1 */
+.rankArtwork{
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  background-color:#0a0a07!important;
+}
+.rank-base{background-image:url('/18.png')!important}
+.rank-intern{background-image:url('/2_intern.png')!important}
+.rank-analyst{background-image:url('/3_analyst.png')!important}
+.rank-associate{background-image:url('/4_associate.png')!important}
+.rank-vp{background-image:url('/5_vp.png')!important}
+.rank-md{background-image:url('/6_md.png')!important}
+.rank-partner{background-image:url('/7_partner.png')!important}
 
 </style>
 </head>
@@ -122,8 +137,8 @@ function loadImage(src){return new Promise((resolve,reject)=>{const i=new Image(
 function cover(ctx,img,x,y,w,h){const s=Math.max(w/img.width,h/img.height),sw=w/s,sh=h/s,sx=(img.width-sw)/2,sy=(img.height-sh)/2;ctx.drawImage(img,sx,sy,sw,sh,x,y,w,h)}
 function rounded(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
 async function drawRankArtwork(ctx,x,y,w,h,key){
-  const el=$('nftRankArt'),bg=getComputedStyle(el).backgroundImage,m=bg.match(/url\([\"']?(data:image\/[^\"')]+)[\"']?\)/);if(!m)throw new Error('Rank art unavailable');
-  const sprite=await loadImage(m[1]);const xs={intern:65,analyst:245,associate:420,vp:594,md:772,partner:946};const sx=xs[key]??65,sy=30,sw=170,sh=170;ctx.drawImage(sprite,sx,sy,sw,sh,x,y,w,h);
+  const files={base:'/18.png',intern:'/2_intern.png',analyst:'/3_analyst.png',associate:'/4_associate.png',vp:'/5_vp.png',md:'/6_md.png',partner:'/7_partner.png'};
+  const art=await loadImage(files[key]||files.intern);cover(ctx,art,x,y,w,h);
 }
 async function renderShareCard(){
   const c=document.createElement('canvas');c.width=1600;c.height=900;const ctx=c.getContext('2d');

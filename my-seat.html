@@ -4,9 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="theme-color" content="#080806" />
+<link rel="preload" href="/18.png" as="image" />
+<link rel="preload" href="/2_intern.png" as="image" />
 <title>Goldstein HQ — My Seat</title>
 <meta name="description" content="Goldstein HQ Seat dashboard prototype." />
-<link rel="stylesheet" href="/assets/rank-sprite.css" />
 <style>
 :root{--bg:#080806;--panel:#11100b;--panel2:#0d0c09;--line:#2b2719;--line2:#40371f;--gold:#d8b43f;--gold2:#f3ce4a;--text:#f4f1e8;--muted:#aaa28d;--soft:#7f7868;--green:#8fe3aa;--red:#f19a9f;--side:216px;--shadow:0 24px 80px rgba(0,0,0,.28)}
 *{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}button,input,a{font:inherit}button{cursor:pointer}h1,h2,h3{font-family:Georgia,"Times New Roman",serif}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
@@ -29,7 +30,7 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 /* Seat rank progression — artwork from the supplied Rabbi Schlomo Goldstein reference */
 .rankSeatCard{grid-template-columns:390px 1fr;grid-template-rows:auto 1fr}
 .rankSeatCard:after{display:none}
-.rankRail{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,1fr);gap:7px;padding:11px 12px;border-bottom:1px solid var(--line);background:#0b0b07}
+.rankRail{grid-column:1/-1;display:grid;grid-template-columns:repeat(7,1fr);gap:7px;padding:11px 12px;border-bottom:1px solid var(--line);background:#0b0b07}
 .rankThumb{min-width:0;border:1px solid #282419;border-radius:9px;background:#0e0e0a;color:#8d8572;padding:6px;transition:.18s;text-align:left}
 .rankThumb:hover{border-color:#4b4022;transform:translateY(-1px)}
 .rankThumb.active{border-color:#82691f;background:#171309;color:#efd05a;box-shadow:inset 0 0 0 1px rgba(216,180,63,.11)}
@@ -60,6 +61,22 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .fundLogoMini img{position:absolute;left:50%;top:50%;width:132%;height:132%;max-width:none;transform:translate(-50%,-50%);object-fit:cover;object-position:center}
 @media(max-width:500px){.fundLogoMini{width:42px;height:42px;flex-basis:42px}.fundTicker{font-size:16px}}
 
+
+/* Native Rabbi Schlomo Goldstein rank artwork v1 */
+.rankArtwork{
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  background-color:#0a0a07!important;
+}
+.rank-base{background-image:url('/18.png')!important}
+.rank-intern{background-image:url('/2_intern.png')!important}
+.rank-analyst{background-image:url('/3_analyst.png')!important}
+.rank-associate{background-image:url('/4_associate.png')!important}
+.rank-vp{background-image:url('/5_vp.png')!important}
+.rank-md{background-image:url('/6_md.png')!important}
+.rank-partner{background-image:url('/7_partner.png')!important}
+
 </style>
 </head>
 <body>
@@ -82,7 +99,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   </header>
 
   <section class="seatCard rankSeatCard" aria-label="Active Goldstein Seat">
-    <div class="rankRail" id="rankRail" aria-label="Seat rank preview">
+    <div class="rankRail" id="rankRail" aria-label="Seat evolution preview">
+      <button class="rankThumb" data-rank="-1"><span class="rankArtwork rank-base"></span><b>Seat</b></button>
       <button class="rankThumb" data-rank="0"><span class="rankArtwork rank-intern"></span><b>Intern</b></button>
       <button class="rankThumb" data-rank="1"><span class="rankArtwork rank-analyst"></span><b>Analyst</b></button>
       <button class="rankThumb" data-rank="2"><span class="rankArtwork rank-associate"></span><b>Associate</b></button>
@@ -144,6 +162,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <script>
 (()=>{
 const $=id=>document.getElementById(id);
+const baseSeat={key:'base',label:'Seat'};
 const ranks=[
   {key:'intern',label:'Intern',min:0,next:1000,capacity:1},
   {key:'analyst',label:'Analyst',min:1000,next:5000,capacity:2},
@@ -159,13 +178,13 @@ const toast=t=>{$('toast').textContent=t;$('toast').classList.add('show');clearT
 const fmt=n=>Math.round(n).toLocaleString();
 const rankForStake=v=>{for(let i=ranks.length-1;i>=0;i--)if(v>=ranks[i].min)return i;return 0};
 function setVisualRank(i,preview=false){
-  const r=ranks[i],art=$('rankArt');
+  const r=i<0?baseSeat:ranks[i],art=$('rankArt');
   art.classList.add('changing');
   setTimeout(()=>{art.className=`rankArtwork rank-${r.key} rankSeatArt`;},90);
-  setTimeout(()=>art.classList.remove('changing'),220);
+  setTimeout(()=>art.classList.remove('changing'),240);
   $('visualRank').textContent=r.label;
-  $('rankCue').textContent=preview?`Preview · ${r.label}`:'Rank follows staked $GLDSTN';
-  document.querySelectorAll('.rankThumb').forEach((b,x)=>b.classList.toggle('active',x===i));
+  $('rankCue').textContent=i<0?'Original Seat artwork':(preview?`Preview · ${r.label}`:'Rank follows staked $GLDSTN');
+  document.querySelectorAll('.rankThumb').forEach(b=>b.classList.toggle('active',Number(b.dataset.rank)===i));
 }
 function renderMilestones(){
   $('rankMilestones').innerHTML=ranks.map((r,i)=>`<div class="rankMilestone ${i===actualRank?'active':''}"><b class="mono">${r.label}</b><span class="mono">${fmt(r.min)}+</span></div>`).join('');
@@ -210,7 +229,7 @@ function previewRank(i,hold=1500){
 }
 function playRanks(){
   clearInterval(previewTimer);clearTimeout(previewReturn);previewReturn=null;
-  let i=0;setVisualRank(i,true);
+  let i=-1;setVisualRank(i,true);
   previewTimer=setInterval(()=>{
     i++;
     if(i>=ranks.length){
@@ -225,7 +244,7 @@ function amount(){const v=Number(String($('stakeInput').value).replace(/,/g,''))
 $('stakeBtn').onclick=()=>{stopPreview();const v=amount();if(!v)return toast('Enter a $GLDSTN amount.');staked+=v;$('stakeInput').value='';renderStake();toast(`${fmt(v)} $GLDSTN staked · simulated.`)};
 $('unstakeBtn').onclick=()=>{stopPreview();const v=amount();if(!v)return toast('Enter a $GLDSTN amount.');staked=Math.max(0,staked-v);$('stakeInput').value='';renderStake();toast(`${fmt(v)} $GLDSTN unstaked · simulated.`)};
 $('replayRank').onclick=playRanks;
-document.querySelectorAll('.rankThumb').forEach((b,i)=>b.onclick=()=>previewRank(i));
+document.querySelectorAll('.rankThumb').forEach(b=>b.onclick=()=>previewRank(Number(b.dataset.rank)));
 $('changeSeat').onclick=()=>toast('One active Seat in this prototype.');
 $('walletBtn').onclick=()=>toast('Wallet connected · simulated.');
 document.querySelectorAll('.fund button:not(:disabled)').forEach(b=>b.onclick=()=>{const path=b.dataset.fund==='gAIX'?'/app/funds/gaix':'/app/funds/gmemestonk';location.href=path});

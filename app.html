@@ -4,10 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="theme-color" content="#080806" />
+<link rel="preload" href="/18.png" as="image" />
+<link rel="preload" href="/2_intern.png" as="image" />
 <title>Goldstein Group — Free Seat Reveal</title>
 <meta name="description" content="Goldstein Seat reveal and claim UX prototype." />
 <link rel="icon" href="/assets/goldstein-keystone.png" />
-<link rel="stylesheet" href="/assets/rank-sprite.css" />
 <style>
 :root{--bg:#080806;--panel:#11100b;--panel2:#0d0c09;--line:#2b2719;--line2:#40371f;--gold:#d8b43f;--gold2:#f3ce4a;--text:#f4f1e8;--muted:#aaa28d;--soft:#7f7868;--green:#8fe3aa;--red:#f19a9f;--side:216px;--shadow:0 24px 80px rgba(0,0,0,.28)}
 *{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}button,a{font:inherit}button{cursor:pointer}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}h1,h2,h3{font-family:Georgia,"Times New Roman",serif}
@@ -59,7 +60,7 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 @media(max-width:1050px) and (min-width:761px){.nav a[href="/app/funds"]:after{content:"FUNDS"}}
 
 /* Rank evolution preview on the free Seat reveal */
-.mintSampleVisual{display:flex;flex-direction:column;gap:12px;padding:22px 14px}.mintArtWrap{position:relative;width:min(255px,92%)}.mintSeatArt{width:100%;height:auto;aspect-ratio:1/1;border-radius:18px;border:1px solid #6b5620;box-shadow:0 18px 55px rgba(0,0,0,.3),inset 0 0 0 5px #090906;transition:opacity .18s ease,transform .18s ease}.mintSeatArt.changing{opacity:.38;transform:scale(.985)}.mintRankBadge{position:absolute;left:10px;right:10px;bottom:10px;display:flex;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid rgba(234,197,64,.35);border-radius:8px;background:rgba(7,7,5,.82);color:#9b9072;font-size:12px;letter-spacing:.11em;text-transform:uppercase}.mintRankBadge strong{color:#f0cf58}.mintRankStrip{width:min(282px,100%);display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.mintRankChip{height:29px;border:1px solid #2d281a;border-radius:7px;background:#0d0d09;color:#726a59;font-size:12px;font-weight:850;letter-spacing:.06em;text-transform:uppercase}.mintRankChip.active{border-color:#65521d;background:#171309;color:#edcb52}.mintRankHint{color:#756d5d;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.fallbackSeatOrb{display:grid;place-items:center;color:#efe2bb;font-family:Georgia,serif;font-size:27px;text-align:center;padding:22px;background:linear-gradient(145deg,#c08a55,#684528)!important;background-image:none!important}.fallbackMode~.mintRankStrip,.fallbackMode~.mintRankHint{display:none}
+.mintSampleVisual{display:flex;flex-direction:column;gap:12px;padding:22px 14px}.mintArtWrap{position:relative;width:min(255px,92%)}.mintSeatArt{width:100%;height:auto;aspect-ratio:1/1;border-radius:18px;border:1px solid #6b5620;box-shadow:0 18px 55px rgba(0,0,0,.3),inset 0 0 0 5px #090906;transition:opacity .18s ease,transform .18s ease}.mintSeatArt.changing{opacity:.38;transform:scale(.985)}.mintRankBadge{position:absolute;left:10px;right:10px;bottom:10px;display:flex;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid rgba(234,197,64,.35);border-radius:8px;background:rgba(7,7,5,.82);color:#9b9072;font-size:12px;letter-spacing:.11em;text-transform:uppercase}.mintRankBadge strong{color:#f0cf58}.mintRankStrip{width:min(320px,100%);display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.mintRankChip{height:29px;border:1px solid #2d281a;border-radius:7px;background:#0d0d09;color:#726a59;font-size:12px;font-weight:850;letter-spacing:.06em;text-transform:uppercase}.mintRankChip.active{border-color:#65521d;background:#171309;color:#edcb52}.mintRankHint{color:#756d5d;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.fallbackSeatOrb{display:grid;place-items:center;color:#efe2bb;font-family:Georgia,serif;font-size:27px;text-align:center;padding:22px;background:linear-gradient(145deg,#c08a55,#684528)!important;background-image:none!important}.fallbackMode~.mintRankStrip,.fallbackMode~.mintRankHint{display:none}
 @media(max-width:760px){.mintSampleVisual{min-height:320px}.mintArtWrap{width:min(285px,88vw)}}
 
 
@@ -76,6 +77,22 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 
 /* Site-wide type floor v4 */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+
+
+/* Native Rabbi Schlomo Goldstein rank artwork v1 */
+.rankArtwork{
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:cover!important;
+  background-color:#0a0a07!important;
+}
+.rank-base{background-image:url('/18.png')!important}
+.rank-intern{background-image:url('/2_intern.png')!important}
+.rank-analyst{background-image:url('/3_analyst.png')!important}
+.rank-associate{background-image:url('/4_associate.png')!important}
+.rank-vp{background-image:url('/5_vp.png')!important}
+.rank-md{background-image:url('/6_md.png')!important}
+.rank-partner{background-image:url('/7_partner.png')!important}
 
 </style>
 </head>
@@ -111,11 +128,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <article class="card revealCard">
     <div class="seatVisual mintSampleVisual">
       <div class="mintArtWrap" id="mintArtWrap">
-        <div class="seatOrb rankArtwork rank-intern mintSeatArt" id="nameTag" role="img" aria-label="Rabbi Schlomo Goldstein rank artwork"></div>
-        <div class="mintRankBadge mono"><span>Rank preview</span><strong id="mintRankName">Intern</strong></div>
+        <div class="seatOrb rankArtwork rank-base mintSeatArt" id="nameTag" role="img" aria-label="Rabbi Schlomo Goldstein Seat evolution artwork"></div>
+        <div class="mintRankBadge mono"><span>Rank preview</span><strong id="mintRankName">Seat</strong></div>
       </div>
       <div class="mintRankStrip" id="mintRankStrip">
-        <button class="mintRankChip active" data-mint-rank="0">Intern</button><button class="mintRankChip" data-mint-rank="1">Analyst</button><button class="mintRankChip" data-mint-rank="2">Associate</button><button class="mintRankChip" data-mint-rank="3">VP</button><button class="mintRankChip" data-mint-rank="4">MD</button><button class="mintRankChip" data-mint-rank="5">Partner</button>
+        <button class="mintRankChip active" data-mint-rank="0">Seat</button><button class="mintRankChip" data-mint-rank="1">Intern</button><button class="mintRankChip" data-mint-rank="2">Analyst</button><button class="mintRankChip" data-mint-rank="3">Associate</button><button class="mintRankChip" data-mint-rank="4">VP</button><button class="mintRankChip" data-mint-rank="5">MD</button><button class="mintRankChip" data-mint-rank="6">Partner</button>
       </div>
       <div class="mintRankHint mono" id="mintRankHint">Stake after claim to rank up</div>
     </div>
@@ -196,11 +213,11 @@ const draws=[
   ["The Risk Officer","Skeptical · Disciplined · Unshaken","Risk & Controls",false]
 ];
 const toast=t=>{$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(window.__t);window.__t=setTimeout(()=>$('toast').classList.remove('show'),1800)};
-const mintRanks=[['intern','Intern'],['analyst','Analyst'],['associate','Associate'],['vp','VP'],['md','MD'],['partner','Partner']];let mintPreviewTimer=null,mintReturn=null;
+const mintRanks=[['base','Seat'],['intern','Intern'],['analyst','Analyst'],['associate','Associate'],['vp','VP'],['md','MD'],['partner','Partner']];let mintPreviewTimer=null,mintReturn=null;
 function setMintRank(i){const [key,label]=mintRanks[i],art=$('nameTag');art.classList.add('changing');setTimeout(()=>{art.className=`seatOrb rankArtwork rank-${key} mintSeatArt`;},70);setTimeout(()=>art.classList.remove('changing'),170);$('mintRankName').textContent=label;document.querySelectorAll('.mintRankChip').forEach((b,x)=>b.classList.toggle('active',x===i));}
 function stopMintPreview(){clearInterval(mintPreviewTimer);clearTimeout(mintReturn);mintPreviewTimer=null;mintReturn=null;}
-function playMintRanks(){stopMintPreview();let i=0;setMintRank(0);mintPreviewTimer=setInterval(()=>{i++;if(i>=mintRanks.length){clearInterval(mintPreviewTimer);mintPreviewTimer=null;mintReturn=setTimeout(()=>{setMintRank(0);mintReturn=null},450);return;}setMintRank(i)},560)}
-function updateDraw(){const p=draws[currentIndex%draws.length];$('characterName').textContent=p[0];$('traits').textContent=p[1];$('desk').textContent=p[2];const art=$('nameTag');if(p[3]){art.className='seatOrb rankArtwork rank-intern mintSeatArt';art.textContent='';$('mintArtWrap').classList.remove('fallbackMode');$('mintRankStrip').style.display='grid';$('mintRankHint').style.display='block';$('mintRankName').textContent='Intern';document.querySelectorAll('.mintRankChip').forEach((b,x)=>b.classList.toggle('active',x===0));}else{stopMintPreview();art.className='seatOrb fallbackSeatOrb';art.textContent=p[0].toUpperCase();$('mintArtWrap').classList.add('fallbackMode');$('mintRankStrip').style.display='none';$('mintRankHint').style.display='none';}$('rerollBtn').textContent=`Reroll · ${100*Math.pow(2,rerolls)} $GLDSTN`;$('nextReroll').textContent=`Next reroll after this: ${100*Math.pow(2,rerolls+1)} $GLDSTN`;}
+function playMintRanks(){stopMintPreview();let i=0;setMintRank(0);mintPreviewTimer=setInterval(()=>{i++;if(i>=mintRanks.length){clearInterval(mintPreviewTimer);mintPreviewTimer=null;mintReturn=setTimeout(()=>{setMintRank(1);mintReturn=null},520);return;}setMintRank(i)},760)}
+function updateDraw(){const p=draws[currentIndex%draws.length];$('characterName').textContent=p[0];$('traits').textContent=p[1];$('desk').textContent=p[2];const art=$('nameTag');if(p[3]){art.className='seatOrb rankArtwork rank-base mintSeatArt';art.textContent='';$('mintArtWrap').classList.remove('fallbackMode');$('mintRankStrip').style.display='grid';$('mintRankHint').style.display='block';$('mintRankName').textContent='Seat';document.querySelectorAll('.mintRankChip').forEach((b,x)=>b.classList.toggle('active',x===0));}else{stopMintPreview();art.className='seatOrb fallbackSeatOrb';art.textContent=p[0].toUpperCase();$('mintArtWrap').classList.add('fallbackMode');$('mintRankStrip').style.display='none';$('mintRankHint').style.display='none';}$('rerollBtn').textContent=`Reroll · ${100*Math.pow(2,rerolls)} $GLDSTN`;$('nextReroll').textContent=`Next reroll after this: ${100*Math.pow(2,rerolls+1)} $GLDSTN`;}
 
 $('drawBtn').onclick=()=>{
   if(!connected){connected=true;$('walletState').innerHTML='<span style="color:#8fe3aa">0x71…9A3 connected · simulated</span>';$('drawBtn').textContent='Reveal my seat — free';toast('Wallet connected. Your first draw is free.');return;}
@@ -210,7 +227,7 @@ $('rerollBtn').onclick=()=>{stopMintPreview();rerolls++;currentIndex=(currentInd
 window.claimSeat=()=>{assigned++;remaining--;try{localStorage.setItem('goldsteinSeatIdentity',JSON.stringify({seat:$('seatNumber').textContent,name:$('characterName').textContent}));if($('characterName').textContent==='Rabbi Schlomo Goldstein')localStorage.setItem('goldsteinSeatStakeV2','0');}catch(e){}$('availableCount').textContent=remaining.toLocaleString()+' available';$('secureBtn').textContent='Claimed · 0.025 ETH';setTimeout(()=>{$('secureBtn').disabled=true;$('rerollBtn').disabled=true},0);toast('Seat claimed for 0.025 ETH · simulated.');return true;};
 $('secureBtn').addEventListener('click',()=>window.claimSeat(),true);
 const applyFloorFilter=f=>document.querySelectorAll('.mini').forEach(card=>card.style.display=(f==='all'||card.dataset.status===f)?'block':'none');
-document.querySelectorAll('.mintRankChip').forEach((b,i)=>b.addEventListener('click',()=>{stopMintPreview();setMintRank(i);mintReturn=setTimeout(()=>{setMintRank(0);mintReturn=null},1200)}));
+document.querySelectorAll('.mintRankChip').forEach((b,i)=>b.addEventListener('click',()=>{stopMintPreview();setMintRank(i);mintReturn=setTimeout(()=>{setMintRank(1);mintReturn=null},1500)}));
 document.querySelectorAll('.tabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');applyFloorFilter(btn.dataset.filter)}));
 applyFloorFilter('available');
 document.querySelectorAll('#faqList details').forEach(item=>item.addEventListener('toggle',()=>{if(item.open){document.querySelectorAll('#faqList details').forEach(other=>{if(other!==item)other.open=false;});}}));
