@@ -1,0 +1,100 @@
+name: Apply Adam LP feedback
+
+on:
+  push:
+    paths:
+      - '.github/workflows/adam-lp-feedback.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update G-Funds LP UX
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('funds.html')
+          s = p.read_text()
+
+          s = s.replace('<span class="marketPill mono"><b>2</b> launch funds</span>', '<span class="marketPill mono"><b>2</b> house funds</span>')
+          s = s.replace('<div class="eyebrow mono">Launch funds</div><h2>Markets</h2>', '<div class="eyebrow mono">House funds</div><h2>Markets</h2>')
+
+          new_positions = '''<section class="positions" aria-label="Your positions">
+  <article class="positionBox holdingsBox"><div class="positionHead"><b>Your fund holdings</b><span class="mono">Wallet</span></div><div class="empty" id="fundHoldings">Connect wallet to view holdings.</div></article>
+  <article class="lpPanel" aria-label="Your LP positions">
+    <div class="lpPanelHead"><div><b>Your LP</b><span class="mono">Liquidity positions</span></div><span class="lpPanelHint mono">APR · fees · emissions</span></div>
+    <div class="lpTable">
+      <div class="lpRow lpLabels mono"><span>Pool</span><span>Balance</span><span>APR</span><span>Fees</span><span>Emissions</span><span>Actions</span></div>
+      <div class="lpRow" id="lpPositions">
+        <div class="lpPool"><strong>—</strong><small class="mono">Connect wallet</small></div>
+        <strong>—</strong><strong>—</strong><strong>—</strong><strong>—</strong>
+        <div class="lpRowActions"><button class="claimFees" disabled>Claim</button><button class="manageLp" disabled>Manage</button></div>
+      </div>
+    </div>
+  </article>
+</section>'''
+          s, n = re.subn(r'<section class="positions" aria-label="Your positions">.*?</section>', new_positions, s, count=1, flags=re.S)
+          if n != 1:
+              raise SystemExit('overview positions section not found')
+
+          css = '''
+/* Full-width LP management layer */
+.positions{display:block;margin-bottom:38px}
+.holdingsBox{margin-bottom:10px}
+.lpPanel{overflow:hidden;border:1px solid var(--line);border-radius:13px;background:linear-gradient(180deg,#10100b,#0d0d09)}
+.lpPanelHead{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:17px 20px;border-bottom:1px solid #292519}
+.lpPanelHead b{display:block;font-size:13px}.lpPanelHead span{display:block;margin-top:2px;color:#6f6859;font-size:9px;letter-spacing:.1em;text-transform:uppercase}.lpPanelHint{white-space:nowrap}
+.lpTable{width:100%}.lpRow{display:grid;grid-template-columns:minmax(160px,1.25fr) repeat(4,minmax(70px,.7fr)) minmax(150px,1fr);gap:12px;align-items:center;padding:14px 20px;border-top:1px solid #242116}.lpRow:first-child{border-top:0}.lpLabels{padding-top:10px;padding-bottom:10px;background:#0a0a07;color:#665f51;font-size:8px;font-weight:850;letter-spacing:.11em;text-transform:uppercase}.lpRow>strong{color:#d4cab2;font-size:12px}.lpPool strong{display:block;color:#e5dcc6;font-size:12px}.lpPool small{display:block;margin-top:3px;color:#70695a;font-size:8px;letter-spacing:.08em;text-transform:uppercase}.lpRowActions{display:flex;justify-content:flex-end;gap:7px}.lpRowActions button{height:34px;padding:0 10px;border-radius:8px;font-size:9px;font-weight:900}.claimFees{border:1px solid #51441f;background:#171309;color:#d8bb55}.manageLp{border:1px solid #4b4024;background:#1a170f;color:#e8dfc5}.lpRowActions button:disabled{opacity:.38;cursor:not-allowed}
+@media(max-width:760px){.lpPanel{overflow-x:auto}.lpPanelHead{min-width:690px}.lpTable{min-width:690px}.positions{margin-bottom:32px}}
+'''
+          s = s.replace('</style>', css + '</style>', 1)
+
+          old_js = "$('fundHoldings').textContent=connected?'No prototype holdings loaded.':'Connect wallet to view holdings.';$('lpPositions').textContent=connected?'No prototype LP positions loaded.':'Connect wallet to view LP positions.';toast(connected?'Wallet connected · simulated.':'Wallet disconnected · simulated.')"
+          new_js = "$('fundHoldings').textContent=connected?'No prototype holdings loaded.':'Connect wallet to view holdings.';const lp=$('lpPositions');lp.querySelector('.lpPool strong').textContent=connected?'No positions':'—';lp.querySelector('.lpPool small').textContent=connected?'Prototype':'Connect wallet';toast(connected?'Wallet connected · simulated.':'Wallet disconnected · simulated.')"
+          if old_js not in s:
+              raise SystemExit('overview wallet JS anchor not found')
+          s = s.replace(old_js, new_js, 1)
+          p.write_text(s)
+
+          p = Path('fund-detail.html')
+          s = p.read_text()
+
+          # Replace compact LP position box with a proper full-width management row.
+          old = '<section class="bottomGrid"><article class="card infoCard"><h2 id="basketTitle">Constituents</h2><div class="chips" id="chips"></div></article><article class="card infoCard"><h2>Your position</h2><div class="positionRow"><div class="positionItem"><small class="mono">Fund holdings</small><strong>—</strong></div><div class="positionItem"><small class="mono">LP position</small><strong>—</strong></div></div><div class="empty">Connect wallet to load positions.</div></article></section>'
+          new = '''<section class="bottomGrid"><article class="card infoCard"><h2 id="basketTitle">Constituents</h2><div class="chips" id="chips"></div></article><article class="card infoCard"><h2>Your holdings</h2><div class="positionRow"><div class="positionItem"><small class="mono">Fund balance</small><strong>—</strong></div><div class="positionItem"><small class="mono">Value</small><strong>—</strong></div></div><div class="empty">Connect wallet to load holdings.</div></article></section>
+<section class="card lpPositionPanel" aria-label="Your LP position"><div class="lpPositionHead"><div><div class="eyebrow mono">Your LP</div><h2>Liquidity position</h2></div><span class="mono">Pool management</span></div><div class="lpPositionRow"><div><small class="mono">Pool</small><strong id="lpPair">$gAIX / GLD</strong></div><div><small class="mono">Balance</small><strong>—</strong></div><div><small class="mono">APR</small><strong>—</strong></div><div><small class="mono">Fees earned</small><strong>—</strong></div><div><small class="mono">Emissions</small><strong>—</strong></div><div class="lpManageActions"><button class="claimLp" disabled>Claim</button><button class="manageLpDetail" data-action="Manage LP">Manage LP</button></div></div></section>'''
+          if old not in s:
+              raise SystemExit('detail position section not found')
+          s = s.replace(old, new, 1)
+
+          css2 = '''
+.lpPositionPanel{margin-top:12px;overflow:hidden}.lpPositionHead{display:flex;align-items:end;justify-content:space-between;gap:16px;padding:19px 20px;border-bottom:1px solid var(--line)}.lpPositionHead h2{margin:3px 0 0;font-size:25px;font-weight:500}.lpPositionHead>span{color:#6e6758;font-size:8px;letter-spacing:.1em;text-transform:uppercase}.lpPositionRow{display:grid;grid-template-columns:minmax(150px,1.25fr) repeat(4,minmax(72px,.72fr)) minmax(170px,1.15fr);gap:12px;align-items:center;padding:16px 20px}.lpPositionRow small{display:block;color:#6d6658;font-size:8px;letter-spacing:.1em;text-transform:uppercase}.lpPositionRow strong{display:block;margin-top:5px;color:#d8cfb7;font-size:12px}.lpManageActions{display:flex;justify-content:flex-end;gap:7px}.lpManageActions button{height:38px;padding:0 11px;border-radius:8px;font-size:9px;font-weight:900}.claimLp{border:1px solid #51441f;background:#171309;color:#d8bb55}.manageLpDetail{border:1px solid #e2bd3c;background:linear-gradient(#eac746,#cda320);color:#130f02}.claimLp:disabled{opacity:.38;cursor:not-allowed}@media(max-width:760px){.lpPositionPanel{overflow-x:auto}.lpPositionHead,.lpPositionRow{min-width:760px}}
+'''
+          s = s.replace('</style>', css2 + '</style>', 1)
+          anchor = "$('pair').textContent='$'+data.ticker+' / GLD';"
+          if anchor not in s:
+              raise SystemExit('detail pair JS anchor not found')
+          s = s.replace(anchor, anchor + "$('lpPair').textContent='$'+data.ticker+' / GLD';", 1)
+          p.write_text(s)
+          PY
+
+      - name: Validate
+        run: |
+          grep -q 'Your LP' funds.html
+          grep -q 'Fees' funds.html
+          grep -q 'Manage LP' fund-detail.html
+          ! grep -q 'Launch funds' funds.html
+
+      - name: Commit
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add funds.html fund-detail.html
+          git commit -m "Refine LP management and fund labels" || exit 0
+          git push
