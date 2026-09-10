@@ -19,6 +19,15 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 @media(max-width:1050px){:root{--side:88px}.brand{justify-content:center;padding:0}.brandText{font-size:0}.brandText:after{content:"HQ";font-size:16px;font-weight:900;color:#f0df9d}.nav a{text-align:center;padding-inline:8px}.nav a span{display:none}.nav a:after{font:850 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace}.nav a[href="/"]:after{content:"MINT"}.nav a[href="/my-seat"]:after{content:"SEAT"}.nav a[href="/funds"]:after{content:"FUNDS"}.sideMeta{display:none}.shell{width:min(980px,calc(100% - 36px))}.fundsGrid{grid-template-columns:1fr}}
 @media(max-width:760px){:root{--side:0px}.sidebar{display:none}.prototype{position:static;min-height:32px;font-size:9px;padding-inline:10px}.mobileBar{display:flex;position:sticky;top:0;z-index:97;height:62px;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line);background:rgba(10,10,7,.96);backdrop-filter:blur(12px)}.mobileBrand{font-size:17px;font-weight:850;letter-spacing:-.02em}.mobileMenu{height:38px;padding:0 11px;border:1px solid #3c3420;border-radius:9px;background:#15130c;color:#d7cdb4;font-size:11px;font-weight:850}.mobileNav{display:none;position:fixed;z-index:96;top:62px;left:0;right:0;padding:9px 12px 13px;border-bottom:1px solid var(--line);background:#0b0b08;box-shadow:0 18px 40px rgba(0,0,0,.28)}.mobileNav.show{display:grid;gap:6px}.mobileNav a{padding:12px;border:1px solid #272318;border-radius:9px;color:#cfc5ac;text-decoration:none;font-size:13px;font-weight:800}.mobileNav a.active{color:#f0d15e;border-color:#4d401f;background:#151209}main{margin-left:0;padding-top:0}.shell{width:calc(100% - 24px);padding:24px 0 64px}.pageTop{align-items:flex-start}.pageTop h1{font-size:39px}.pageTop p{font-size:13px}.wallet{height:40px;padding-inline:11px}.positions{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.actions .lp{grid-column:1/-1}.coming{align-items:flex-start}.comingBadge{white-space:nowrap}}
 @media(max-width:500px){.pageTop{display:grid}.pageTop .wallet{justify-self:start}.fundMain{padding:19px}.metrics,.holdings{margin-left:19px;margin-right:19px}.metrics{grid-template-columns:1fr 1fr}.metric:last-child{grid-column:1/-1}.actions{padding:18px 19px 20px}.sectionHead{display:grid}.fundCard h3{font-size:27px}.coming{display:grid}.comingBadge{justify-self:start}}
+
+/* Full-width LP management layer */
+.positions{display:block;margin-bottom:38px}
+.holdingsBox{margin-bottom:10px}
+.lpPanel{overflow:hidden;border:1px solid var(--line);border-radius:13px;background:linear-gradient(180deg,#10100b,#0d0d09)}
+.lpPanelHead{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:17px 20px;border-bottom:1px solid #292519}
+.lpPanelHead b{display:block;font-size:13px}.lpPanelHead span{display:block;margin-top:2px;color:#6f6859;font-size:9px;letter-spacing:.1em;text-transform:uppercase}.lpPanelHint{white-space:nowrap}
+.lpTable{width:100%}.lpRow{display:grid;grid-template-columns:minmax(160px,1.25fr) repeat(4,minmax(70px,.7fr)) minmax(150px,1fr);gap:12px;align-items:center;padding:14px 20px;border-top:1px solid #242116}.lpRow:first-child{border-top:0}.lpLabels{padding-top:10px;padding-bottom:10px;background:#0a0a07;color:#665f51;font-size:8px;font-weight:850;letter-spacing:.11em;text-transform:uppercase}.lpRow>strong{color:#d4cab2;font-size:12px}.lpPool strong{display:block;color:#e5dcc6;font-size:12px}.lpPool small{display:block;margin-top:3px;color:#70695a;font-size:8px;letter-spacing:.08em;text-transform:uppercase}.lpRowActions{display:flex;justify-content:flex-end;gap:7px}.lpRowActions button{height:34px;padding:0 10px;border-radius:8px;font-size:9px;font-weight:900}.claimFees{border:1px solid #51441f;background:#171309;color:#d8bb55}.manageLp{border:1px solid #4b4024;background:#1a170f;color:#e8dfc5}.lpRowActions button:disabled{opacity:.38;cursor:not-allowed}
+@media(max-width:760px){.lpPanel{overflow-x:auto}.lpPanelHead{min-width:690px}.lpTable{min-width:690px}.positions{margin-bottom:32px}}
 </style>
 </head>
 <body>
@@ -28,15 +37,25 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 <div class="prototype mono">Prototype only — simulated fund data. No real assets or transactions.</div>
 <main><div class="shell">
 <header class="pageTop"><div><div class="eyebrow mono">Fund desk</div><h1>G-Funds</h1><p>Seat-holder markets.</p></div><button class="wallet mono" id="walletBtn"><i></i>Connect wallet</button></header>
-<div class="marketLine"><span class="marketPill mono"><b>2</b> launch funds</span><span class="marketPill mono">Pairs settle in <b>GLD</b></span><span class="marketPill mono">Seat mint at <b>NAV</b></span></div>
+<div class="marketLine"><span class="marketPill mono"><b>2</b> house funds</span><span class="marketPill mono">Pairs settle in <b>GLD</b></span><span class="marketPill mono">Seat mint at <b>NAV</b></span></div>
 
 <section class="positions" aria-label="Your positions">
-  <article class="positionBox"><div class="positionHead"><b>Your fund holdings</b><span class="mono">Wallet</span></div><div class="empty" id="fundHoldings">Connect wallet to view holdings.</div></article>
-  <article class="positionBox"><div class="positionHead"><b>Your LP positions</b><span class="mono">Liquidity</span></div><div class="empty" id="lpPositions">Connect wallet to view LP positions.</div></article>
+  <article class="positionBox holdingsBox"><div class="positionHead"><b>Your fund holdings</b><span class="mono">Wallet</span></div><div class="empty" id="fundHoldings">Connect wallet to view holdings.</div></article>
+  <article class="lpPanel" aria-label="Your LP positions">
+    <div class="lpPanelHead"><div><b>Your LP</b><span class="mono">Liquidity positions</span></div><span class="lpPanelHint mono">APR · fees · emissions</span></div>
+    <div class="lpTable">
+      <div class="lpRow lpLabels mono"><span>Pool</span><span>Balance</span><span>APR</span><span>Fees</span><span>Emissions</span><span>Actions</span></div>
+      <div class="lpRow" id="lpPositions">
+        <div class="lpPool"><strong>—</strong><small class="mono">Connect wallet</small></div>
+        <strong>—</strong><strong>—</strong><strong>—</strong><strong>—</strong>
+        <div class="lpRowActions"><button class="claimFees" disabled>Claim</button><button class="manageLp" disabled>Manage</button></div>
+      </div>
+    </div>
+  </article>
 </section>
 
 <section>
-  <div class="sectionHead"><div><div class="eyebrow mono">Launch funds</div><h2>Markets</h2></div><div class="sectionTag mono">Click a fund for details</div></div>
+  <div class="sectionHead"><div><div class="eyebrow mono">House funds</div><h2>Markets</h2></div><div class="sectionTag mono">Click a fund for details</div></div>
   <div class="fundsGrid">
     <article class="fundCard" data-href="/funds/gaix" tabindex="0" aria-label="Open Goldstein AI Index">
       <div class="fundMain"><div class="fundHead"><div class="manager"><div class="managerPfp" aria-label="Fund manager NFT placeholder"></div><div class="managerMeta"><div class="ticker mono">$gAIX</div><small class="mono">House manager · NFT</small></div></div><span class="detailsLink">Details →</span></div><h3>Goldstein AI Index</h3><p class="fundDesc">Magnificent Seven AI equity index.</p><div class="riskLine mono"><span>Risk</span><div class="riskDots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div><span>Growth</span></div></div>
@@ -61,7 +80,7 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 <div class="toast" id="toast"></div>
 <script>
 (()=>{const $=id=>document.getElementById(id);let action='Add liquidity',fund='gAIX',connected=false;const toast=t=>{$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('toast').classList.remove('show'),1700)};$('mobileMenu').onclick=()=>$('mobileNav').classList.toggle('show');document.querySelectorAll('#mobileNav a').forEach(a=>a.onclick=()=>$('mobileNav').classList.remove('show'));
-$('walletBtn').onclick=()=>{connected=!connected;$('walletBtn').innerHTML=connected?'<i></i>0x71…9A3':'<i></i>Connect wallet';$('fundHoldings').textContent=connected?'No prototype holdings loaded.':'Connect wallet to view holdings.';$('lpPositions').textContent=connected?'No prototype LP positions loaded.':'Connect wallet to view LP positions.';toast(connected?'Wallet connected · simulated.':'Wallet disconnected · simulated.')};
+$('walletBtn').onclick=()=>{connected=!connected;$('walletBtn').innerHTML=connected?'<i></i>0x71…9A3':'<i></i>Connect wallet';$('fundHoldings').textContent=connected?'No prototype holdings loaded.':'Connect wallet to view holdings.';const lp=$('lpPositions');lp.querySelector('.lpPool strong').textContent=connected?'No positions':'—';lp.querySelector('.lpPool small').textContent=connected?'Prototype':'Connect wallet';toast(connected?'Wallet connected · simulated.':'Wallet disconnected · simulated.')};
 function openAction(btn){action=btn.dataset.action;fund=btn.dataset.fund;$('ticketType').textContent=action;$('ticketTitle').textContent='$'+fund;$('ticketFund').textContent='$'+fund+' / GLD';$('actionAmount').value='';$('actionModal').classList.add('show');$('actionModal').setAttribute('aria-hidden','false')}
 function closeAction(){$('actionModal').classList.remove('show');$('actionModal').setAttribute('aria-hidden','true')}
 document.querySelectorAll('.action').forEach(b=>b.onclick=e=>{e.stopPropagation();openAction(b)});document.querySelectorAll('.fundCard').forEach(c=>{c.onclick=()=>location.href=c.dataset.href;c.onkeydown=e=>{if(e.key==='Enter')location.href=c.dataset.href}});$('closeModal').onclick=closeAction;$('actionModal').onclick=e=>{if(e.target===$('actionModal'))closeAction()};$('previewAction').onclick=()=>{const v=Number(String($('actionAmount').value).replace(/,/g,''));if(!Number.isFinite(v)||v<=0)return toast('Enter an amount.');closeAction();toast(`${action} · $${fund} · simulated.`)}})();
