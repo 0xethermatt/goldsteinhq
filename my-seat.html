@@ -22,6 +22,8 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
   .nav a[href="/"]:after{content:"MINT"}
   .nav a[href="/my-seat"]:after{content:"SEAT"}
 }
+
+@media(max-width:1050px) and (min-width:761px){.nav a[href="/funds"]:after{content:"FUNDS"}}
 </style>
 </head>
 <body>
@@ -30,11 +32,12 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
   <nav class="nav">
     <a href="/" target="_top"><span>Mint</span></a>
     <a class="active" href="/my-seat" target="_top"><span>My Seat</span></a>
+    <a href="/funds" target="_top"><span>G-Funds</span></a>
   </nav>
   <div class="sideMeta mono">Seat dashboard · prototype</div>
 </aside>
 <div class="mobileBar"><div class="mobileBrand">Goldstein HQ</div><button class="mobileMenu" id="mobileMenu">Menu</button></div>
-<nav class="mobileNav" id="mobileNav"><a href="/" target="_top">Mint</a><a class="active" href="/my-seat" target="_top">My Seat</a></nav>
+<nav class="mobileNav" id="mobileNav"><a href="/" target="_top">Mint</a><a class="active" href="/my-seat" target="_top">My Seat</a><a href="/funds" target="_top">G-Funds</a></nav>
 <div class="prototype mono">Prototype only — simulated Seat, staking and fund data. No real assets or transactions.</div>
 <main><div class="shell">
   <header class="pageTop" id="overview">
