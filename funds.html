@@ -62,6 +62,13 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 /* Site-wide type floor v4 */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
+
+
+/* House-fund logos v1 */
+.managerPfp.fundLogo,.comingIcon.fundLogo{position:relative;overflow:hidden;background:#020202!important;border-color:#44391d;box-shadow:0 8px 26px rgba(0,0,0,.24)}
+.managerPfp.fundLogo img,.comingIcon.fundLogo img{position:absolute;left:50%;top:50%;width:132%;height:132%;max-width:none;transform:translate(-50%,-50%);object-fit:cover;object-position:center}
+.comingIcon.fundLogo{width:52px;height:52px;flex:0 0 52px}
+
 </style>
 </head>
 <body>
@@ -92,14 +99,14 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <div class="sectionHead"><div><div class="eyebrow mono">House funds</div><h2>Markets</h2></div><div class="sectionTag mono">Click a fund for details</div></div>
   <div class="fundsGrid">
     <article class="fundCard" data-href="/app/funds/gaix" tabindex="0" aria-label="Open Goldstein AI Index">
-      <div class="fundMain"><div class="fundHead"><div class="manager"><div class="managerPfp" aria-label="gAIX manager NFT — Seat B10"><img src="/b10.png" alt="Seat B10, manager of gAIX"></div><div class="managerMeta"><div class="ticker mono">$gAIX</div><small class="mono">Seat B10 · House manager</small></div></div><span class="detailsLink">Details →</span></div><h3>Goldstein AI Index</h3><p class="fundDesc">AI infrastructure and frontier-technology index.</p><div class="riskLine mono"><span>Risk</span><div class="riskDots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div><span>Growth</span></div></div>
+      <div class="fundMain"><div class="fundHead"><div class="manager"><div class="managerPfp fundLogo" aria-label="gAIX fund logo"><img src="/gAIX.png" alt="gAIX fund logo"></div><div class="managerMeta"><div class="ticker mono">$gAIX</div><small class="mono">House fund · managed by Seat B10</small></div></div><span class="detailsLink">Details →</span></div><h3>Goldstein AI Index</h3><p class="fundDesc">AI infrastructure and frontier-technology index.</p><div class="riskLine mono"><span>Risk</span><div class="riskDots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div><span>Growth</span></div></div>
       <div class="metrics"><div class="metric"><small class="mono">TVL</small><strong>—</strong></div><div class="metric"><small class="mono">LP APR</small><strong>—</strong></div><div class="metric"><small class="mono">Emissions</small><strong>—</strong></div></div>
       <div class="holdings"><div class="holdingsLabel mono">Index</div><div class="chips"><span class="holding mono">NVDA</span><span class="holding mono">TSLA</span><span class="holding mono">MU</span><span class="holding mono">GOOGL</span><span class="holding mono">SPCX</span></div></div>
       <div class="actions"><button class="action lp" data-action="Add liquidity" data-fund="gAIX">Add liquidity</button><button class="action buy" data-action="Buy" data-fund="gAIX">Buy</button><button class="action mint" data-action="Mint at NAV" data-fund="gAIX">Mint</button></div>
     </article>
 
     <article class="fundCard volatile" data-href="/app/funds/gmemestonk" tabindex="0" aria-label="Open Goldstein Meme Stock Fund">
-      <div class="fundMain"><div class="fundHead"><div class="manager"><div class="managerPfp" aria-label="gMEMESTONK manager NFT — Seat B17"><img src="/b17.png" alt="Seat B17, manager of gMEMESTONK"></div><div class="managerMeta"><div class="ticker mono">$gMEMESTONK</div><small class="mono">Seat B17 · House manager</small></div></div><span class="detailsLink">Details →</span></div><h3>Meme Index</h3><p class="fundDesc">Agent-managed internet-native and meme-market exposure.</p><div class="riskLine mono"><span>Risk</span><div class="riskDots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><span>High</span></div></div>
+      <div class="fundMain"><div class="fundHead"><div class="manager"><div class="managerPfp fundLogo" aria-label="gMEMESTONK fund logo"><img src="/gMEMESTOCK.png" alt="gMEMESTONK fund logo"></div><div class="managerMeta"><div class="ticker mono">$gMEMESTONK</div><small class="mono">House fund · managed by Seat B17</small></div></div><span class="detailsLink">Details →</span></div><h3>Meme Index</h3><p class="fundDesc">Agent-managed internet-native and meme-market exposure.</p><div class="riskLine mono"><span>Risk</span><div class="riskDots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><span>High</span></div></div>
       <div class="metrics"><div class="metric"><small class="mono">TVL</small><strong>—</strong></div><div class="metric"><small class="mono">LP APR</small><strong>—</strong></div><div class="metric"><small class="mono">Emissions</small><strong>—</strong></div></div>
       <div class="holdings"><div class="holdingsLabel mono">Index</div><div class="chips"><span class="holding mono">AI</span><span class="holding mono">BONER</span><span class="holding mono">MOO</span><span class="holding mono">OPTIMUS</span><span class="holding mono">MEME</span></div></div>
       <div class="actions"><button class="action lp" data-action="Add liquidity" data-fund="gMEMESTONK">Add liquidity</button><button class="action buy" data-action="Buy" data-fund="gMEMESTONK">Buy</button><button class="action mint" data-action="Mint at NAV" data-fund="gMEMESTONK">Mint</button></div>
@@ -107,7 +114,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   </div>
 </section>
 
-<section><div class="sectionHead"><div><div class="eyebrow mono">Next</div><h2>Coming soon</h2></div></div><article class="coming"><div class="comingLeft"><div class="comingIcon"></div><div><h3>Goldstein Preserve</h3><p>Defensive allocation.</p></div></div><span class="comingBadge mono">Coming soon</span></article></section>
+<section><div class="sectionHead"><div><div class="eyebrow mono">Next</div><h2>Coming soon</h2></div></div><article class="coming"><div class="comingLeft"><div class="comingIcon fundLogo"><img src="/gDefensive.png" alt="Goldstein Preserve fund logo"></div><div><h3>Goldstein Preserve</h3><p>Defensive allocation.</p></div></div><span class="comingBadge mono">Coming soon</span></article></section>
 </div></main>
 
 <div class="modal" id="actionModal" aria-hidden="true"><section class="ticket" role="dialog" aria-modal="true" aria-labelledby="ticketTitle"><div class="ticketHead"><div><small class="mono" id="ticketType">Add liquidity</small><h3 id="ticketTitle">$gAIX</h3></div><button class="close" id="closeModal" aria-label="Close">×</button></div><div class="ticketBody"><div class="ticketRow"><span>Market</span><b class="mono" id="ticketFund">$gAIX / GLD</b></div><div class="ticketRow"><span>TVL</span><b>—</b></div><div class="ticketRow"><span>LP APR</span><b>—</b></div><div class="ticketRow"><span>Emissions</span><b>—</b></div><div class="amountWrap"><input id="actionAmount" inputmode="decimal" placeholder="0.00" aria-label="Amount"><span class="mono">GLD</span></div><button class="preview" id="previewAction">Preview</button><div class="ticketNote">Prototype only.</div></div></section></div>

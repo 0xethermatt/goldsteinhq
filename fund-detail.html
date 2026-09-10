@@ -47,6 +47,12 @@
 /* Site-wide type floor v4 */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
+
+
+/* House-fund logo identity v1 */
+.fundIdentityLogo{position:relative;overflow:hidden;background:#020202!important;border-color:#51441f!important;box-shadow:0 10px 28px rgba(0,0,0,.28)!important}
+.fundIdentityLogo img{position:absolute!important;left:50%;top:50%;width:132%!important;height:132%!important;max-width:none;transform:translate(-50%,-50%);object-fit:cover!important;object-position:center}
+
 </style>
 </head>
 <body>
@@ -54,7 +60,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="mobileBar"><div class="mobileBrand">Goldstein HQ</div><button class="mobileMenu" id="mobileMenu">Menu</button></div><nav class="mobileNav" id="mobileNav"><a href="/app" target="_top">Mint</a><a href="/app/my-seat" target="_top">My Seat</a><a class="active" href="/app/funds" target="_top">G-Funds</a></nav>
 <div class="prototype mono">Prototype only — mock market & portfolio data. No real assets or transactions.</div>
 <main><div class="shell"><a class="back" href="/app/funds">← G-Funds</a>
-<header class="top" id="top"><div class="fundIdentity"><div class="pfp"><img id="managerImage" src="/b10.png" alt="Goldstein house manager NFT"></div><div><div class="eyebrow mono">House fund · NFT manager</div><h1 id="name">Goldstein AI Index</h1><div class="ticker mono" id="ticker">$gAIX</div></div></div><div class="topActions"><button class="btn lp" data-action="Add liquidity">Add liquidity</button><button class="btn buy" data-action="Buy">Buy</button><button class="btn mint" data-action="Mint at NAV">Mint</button></div></header>
+<header class="top" id="top"><div class="fundIdentity"><div class="pfp fundIdentityLogo"><img id="fundLogoImage" src="/gAIX.png" alt="gAIX fund logo"></div><div><div class="eyebrow mono">House fund · NFT manager</div><h1 id="name">Goldstein AI Index</h1><div class="ticker mono" id="ticker">$gAIX</div></div></div><div class="topActions"><button class="btn lp" data-action="Add liquidity">Add liquidity</button><button class="btn buy" data-action="Buy">Buy</button><button class="btn mint" data-action="Mint at NAV">Mint</button></div></header>
 <section class="summary"><div class="stat"><small class="mono">TVL</small><strong>—</strong></div><div class="stat"><small class="mono">LP APR</small><strong>—</strong></div><div class="stat"><small class="mono">Emissions</small><strong>—</strong></div><div class="stat"><small class="mono">Settlement</small><strong>GLD</strong></div></section>
 <section class="mainGrid">
 <article class="card chartCard"><div class="cardTitle"><h2>Performance</h2><span class="mono">Live after launch</span></div><div class="chart"><svg viewBox="0 0 800 260" preserveAspectRatio="none" aria-hidden="true"><path d="M0 190 C120 170 170 182 250 160 S390 158 460 132 S610 120 800 88" fill="none" stroke="rgba(216,180,63,.48)" stroke-width="3" stroke-dasharray="6 7"/></svg><div class="chartEmpty mono">Preview · performance history begins at launch</div></div></article>
@@ -84,14 +90,14 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 const $=id=>document.getElementById(id);
 const meme=location.pathname.includes('gmemestonk');
 const data=meme?{
-  name:'Meme Index',ticker:'gMEMESTONK',manager:'Seat B17 · House Manager',managerImg:'/b17.png',risk:5,label:'High',
+  name:'Meme Index',ticker:'gMEMESTONK',manager:'Seat B17 · House Manager',managerImg:'/b17.png',logoImg:'/gMEMESTOCK.png',risk:5,label:'High',
   objective:'High-beta basket of internet-native and meme-market exposure.',
   agent:'Rebalances the approved basket as signals and liquidity change, within the fund risk limits.',
   brief:'Packages five internet-native assets into one actively supervised onchain index.',
   chips:['AI','BONER','MOO','OPTIMUS','MEME'],
   colors:['#e58a4a','#d06842','#aa4f3e','#8e633c','#d9a149']
 }:{
-  name:'Goldstein AI Index',ticker:'gAIX',manager:'Seat B10 · House Manager',managerImg:'/b10.png',risk:3,label:'Growth',
+  name:'Goldstein AI Index',ticker:'gAIX',manager:'Seat B10 · House Manager',managerImg:'/b10.png',logoImg:'/gAIX.png',risk:3,label:'Growth',
   objective:'Concentrated AI infrastructure and frontier-technology exposure.',
   agent:'Monitors basket weights, rebalances drift and enforces the fund risk policy.',
   brief:'Bundles the approved AI-infrastructure basket into one tokenized fund position.',
@@ -99,7 +105,7 @@ const data=meme?{
   colors:['#e9c94f','#a7b766','#5f9673','#877d4e','#b88f3d']
 };
 if(meme)$('top').classList.add('volatile');
-$('managerImage').src=data.managerImg;$('managerImage').alt=data.manager+', manager of $'+data.ticker;
+$('fundLogoImage').src=data.logoImg;$('fundLogoImage').alt='$'+data.ticker+' fund logo';
 $('managerImageCard').src=data.managerImg;$('managerImageCard').alt=data.manager+', manager of $'+data.ticker;
 $('managerName').textContent=data.manager;
 document.title='Goldstein HQ — '+data.name;

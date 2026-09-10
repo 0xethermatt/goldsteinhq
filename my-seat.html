@@ -52,6 +52,14 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 /* Site-wide type floor v4 */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
+
+
+/* House-fund logos in Seat dashboard v1 */
+.seatFundIdentity{display:flex;align-items:center;gap:10px;min-width:0}
+.fundLogoMini{position:relative;width:48px;height:48px;flex:0 0 48px;overflow:hidden;border:1px solid #44391d;border-radius:11px;background:#020202;box-shadow:0 8px 24px rgba(0,0,0,.24)}
+.fundLogoMini img{position:absolute;left:50%;top:50%;width:132%;height:132%;max-width:none;transform:translate(-50%,-50%);object-fit:cover;object-position:center}
+@media(max-width:500px){.fundLogoMini{width:42px;height:42px;flex-basis:42px}.fundTicker{font-size:16px}}
+
 </style>
 </head>
 <body>
@@ -126,9 +134,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <section id="funds">
     <div class="sectionHead"><div><div class="eyebrow mono">G-Funds</div><h2>Put your Seat to work.</h2><p>Primary minting access for Goldstein's agent-managed onchain funds.</p></div><div class="sim mono">Seat holder access</div></div>
     <div class="fundGrid">
-      <article class="fund"><div class="fundTag"><span class="fundTicker mono">gAIX</span><span class="available mono">Available</span></div><h3>Goldstein AI Index</h3><p>AI infrastructure and frontier-technology exposure managed as an onchain index.</p><div class="fundBottom"><span class="navPrice mono">Mint at NAV</span><button data-fund="gAIX">Mint →</button></div></article>
-      <article class="fund"><div class="fundTag"><span class="fundTicker mono">gMEMESTONK</span><span class="available mono">Available</span></div><h3>Meme Index</h3><p>Agent-managed basket built around liquid internet-native and meme-market exposure.</p><div class="fundBottom"><span class="navPrice mono">Mint at NAV</span><button data-fund="gMEMESTONK">Mint →</button></div></article>
-      <article class="fund"><div class="fundTag"><span class="fundTicker mono">gPRESERVE</span><span class="available mono" style="color:#8b826e">Coming soon</span></div><h3>Preserve</h3><p>Defensive allocation combining gold, short-duration sovereign exposure and stable yield.</p><div class="fundBottom"><span class="navPrice mono">Not live</span><button data-fund="gPRESERVE" disabled>Coming soon</button></div></article>
+      <article class="fund"><div class="fundTag"><span class="seatFundIdentity"><span class="fundLogoMini"><img src="/gAIX.png" alt="gAIX fund logo"></span><span class="fundTicker mono">gAIX</span></span><span class="available mono">Available</span></div><h3>Goldstein AI Index</h3><p>AI infrastructure and frontier-technology exposure managed as an onchain index.</p><div class="fundBottom"><span class="navPrice mono">Mint at NAV</span><button data-fund="gAIX">Mint →</button></div></article>
+      <article class="fund"><div class="fundTag"><span class="seatFundIdentity"><span class="fundLogoMini"><img src="/gMEMESTOCK.png" alt="gMEMESTONK fund logo"></span><span class="fundTicker mono">gMEMESTONK</span></span><span class="available mono">Available</span></div><h3>Meme Index</h3><p>Agent-managed basket built around liquid internet-native and meme-market exposure.</p><div class="fundBottom"><span class="navPrice mono">Mint at NAV</span><button data-fund="gMEMESTONK">Mint →</button></div></article>
+      <article class="fund"><div class="fundTag"><span class="seatFundIdentity"><span class="fundLogoMini"><img src="/gDefensive.png" alt="Goldstein Preserve fund logo"></span><span class="fundTicker mono">gPRESERVE</span></span><span class="available mono" style="color:#8b826e">Coming soon</span></div><h3>Preserve</h3><p>Defensive allocation combining gold, short-duration sovereign exposure and stable yield.</p><div class="fundBottom"><span class="navPrice mono">Not live</span><button data-fund="gPRESERVE" disabled>Coming soon</button></div></article>
     </div>
   </section>
 </div></main>
