@@ -1,0 +1,1 @@
+Deploy marker for simplified My Seat dashboard and rank preview.
