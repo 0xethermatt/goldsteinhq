@@ -9,18 +9,15 @@ permissions:
   contents: write
 
 jobs:
-  integrate:
+  finalize:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Apply core rank integration
-        run: python3 scripts/integrate_seat_ranks.py
+      - name: Clean final rank handoff
+        run: python3 scripts/cleanup_rank_integration.py
 
-      - name: Polish claim handoff and artwork framing
-        run: python3 scripts/polish_rank_integration.py
-
-      - name: Validate integration
+      - name: Validate integrated experience
         run: |
           grep -q '/assets/rank-sprite.css' my-seat.html
           grep -q 'Rabbi Schlomo Goldstein' my-seat.html
@@ -40,30 +37,30 @@ jobs:
           grep -q 'id="nftRankArt"' welcome.html
           grep -q 'drawRankArtwork' welcome.html
           grep -q 'background-size:693.529% 314.118%' assets/rank-sprite.css
+          test "$(grep -o "if(state.rankKey){try{const size=nw-24" welcome.html | wc -l | tr -d ' ')" -eq 1
 
       - name: JavaScript and DOM sanity check
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re, subprocess, tempfile
+          import re, subprocess
           for filename in ['index.html','my-seat.html','welcome.html']:
               html=Path(filename).read_text()
               ids=re.findall(r'\bid=["\']([^"\']+)["\']',html)
               dup=sorted({x for x in ids if ids.count(x)>1})
               if dup:
                   raise SystemExit(f'{filename}: duplicate IDs: {dup}')
-              scripts=re.findall(r'<script[^>]*>(.*?)</script>',html,re.S)
-              for i,js in enumerate(scripts):
+              for i,js in enumerate(re.findall(r'<script[^>]*>(.*?)</script>',html,re.S)):
                   tmp=Path('/tmp')/f'{filename.replace(".","-")}-{i}.js'
                   tmp.write_text(js)
                   subprocess.run(['node','--check',str(tmp)],check=True)
           print('JS syntax and DOM IDs OK')
           PY
 
-      - name: Commit integrated rank experience
+      - name: Commit cleanup
         run: |
           git config user.name "Goldstein UI Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add index.html my-seat.html welcome.html assets/rank-sprite.css
-          git commit -m "Polish Seat rank progression and claim handoff" || exit 0
+          git add welcome.html
+          git commit -m "Finalize Seat rank integration" || exit 0
           git push
