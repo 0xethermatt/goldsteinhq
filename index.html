@@ -36,19 +36,30 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
   .brandText:after{content:"HQ";font-size:16px;font-weight:900;letter-spacing:.02em;color:#f0df9d}
 }
 
-/* Primary page switcher: Mint ↔ My Seat */
-.pageSwitch{display:none}
+
+/* Unified Goldstein primary navigation */
+.mobileBar{display:none}
+@media(max-width:1050px) and (min-width:761px){
+  .nav a[href="/"]:after{content:"MINT"}
+  .nav a[href="/my-seat"]:after{content:"SEAT"}
+}
 @media(max-width:760px){
-  .mobilePageSwitch{position:fixed;z-index:96;top:34px;left:0;right:0;height:54px;padding:8px 12px;display:grid;grid-template-columns:1fr 1fr;gap:7px;border-bottom:1px solid var(--line);background:rgba(10,10,7,.97);backdrop-filter:blur(12px)}
-  .mobilePageSwitch a{display:flex;align-items:center;justify-content:center;border:1px solid #2c281b;border-radius:9px;background:#0d0d09;color:#928a76;text-decoration:none;font-size:12px;font-weight:850}
-  .mobilePageSwitch a.active{border-color:#4e411e;background:#171309;color:#f0d15e}
-  main{padding-top:88px}
+  .prototype{position:static;min-height:32px;font-size:9px;padding-inline:10px}
+  .mobileBar{display:flex;position:sticky;top:0;z-index:97;height:62px;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line);background:rgba(10,10,7,.96);backdrop-filter:blur(12px)}
+  .mobileBrand{font-size:17px;font-weight:850;letter-spacing:-.02em}
+  .mobileMenu{height:38px;padding:0 11px;border:1px solid #3c3420;border-radius:9px;background:#15130c;color:#d7cdb4;font-size:11px;font-weight:850}
+  .mobileNav{display:none;position:fixed;z-index:96;top:62px;left:0;right:0;padding:9px 12px 13px;border-bottom:1px solid var(--line);background:#0b0b08;box-shadow:0 18px 40px rgba(0,0,0,.28)}
+  .mobileNav.show{display:grid;gap:6px}
+  .mobileNav a{padding:12px;border:1px solid #272318;border-radius:9px;color:#cfc5ac;text-decoration:none;font-size:13px;font-weight:800}
+  .mobileNav a.active{color:#f0d15e;border-color:#4d401f;background:#151209}
+  main{margin-left:0;padding-top:0}
 }
 </style>
 </head>
 <body>
-<aside class="sidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a class="active" href="/" target="_top"><span>Mint</span></a><a href="/my-seat" target="_top"><span>My Seat</span></a><a href="#firm"><span>The Floor</span></a><a href="#learn"><span>FAQ</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>
-<nav class="pageSwitch mobilePageSwitch" aria-label="Goldstein pages"><a class="active" href="/" target="_top">Mint</a><a href="/my-seat" target="_top">My Seat</a></nav>
+<aside class="sidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a class="active" href="/" target="_top"><span>Mint</span></a><a href="/my-seat" target="_top"><span>My Seat</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>
+<div class="mobileBar"><div class="mobileBrand">Goldstein HQ</div><button class="mobileMenu" id="mobileMenu">Menu</button></div>
+<nav class="mobileNav" id="mobileNav"><a class="active" href="/" target="_top">Mint</a><a href="/my-seat" target="_top">My Seat</a></nav>
 <div class="prototype mono">Prototype only — simulated wallet, reveal, rerolls and claim. No real assets or transactions.</div>
 <main><div class="shell">
 <section class="hero" aria-label="Goldstein Group — Take a Seat at the Firm"></section>
@@ -143,6 +154,7 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 <script>
 (()=>{
 const $=id=>document.getElementById(id);let connected=false,revealed=false,rerolls=0,assigned=353,remaining=1147,currentIndex=0;
+$('mobileMenu').onclick=()=>$('mobileNav').classList.toggle('show');document.querySelectorAll('#mobileNav a').forEach(a=>a.onclick=()=>$('mobileNav').classList.remove('show'));
 const draws=[
   ["The Value Broker","Patient · Calculated · Relentless","Capital Allocation"],
   ["The Macro Bull","Conviction · Timing · Scale","Global Macro"],
