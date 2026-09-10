@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 
+# One-time architecture migration: public site at /, product app under /app.
 # Preserve the existing Mint experience as the app entry document.
 current_app = Path('index.html').read_text()
 if 'Free Seat Reveal' in current_app and 'id="drawBtn"' in current_app:
