@@ -1,1 +1,1 @@
-{"redirects":[{"source":"/","destination":"/welcome.html","permanent":false}],"rewrites":[{"source":"/my-seat","destination":"/my-seat.html"}]}
+{"redirects":[{"source":"/","destination":"/welcome.html","permanent":false}],"rewrites":[{"source":"/my-seat","destination":"/my-seat.html"},{"source":"/funds","destination":"/funds.html"}]}
