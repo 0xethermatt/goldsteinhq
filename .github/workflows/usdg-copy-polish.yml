@@ -1,0 +1,37 @@
+name: Clarify USDG NAV minting
+
+on:
+  push:
+    paths:
+      - '.github/workflows/usdg-copy-polish.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update primary-market copy
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ['index.html','landing.html']:
+              p=Path(name)
+              if not p.exists(): continue
+              s=p.read_text()
+              s=s.replace('Seat holders mint G-Funds at net asset value.','Seat holders mint G-Funds at NAV using USDG.')
+              s=s.replace('Seat holders access primary G-Fund minting at NAV and become','Seat holders access primary G-Fund minting at NAV using USDG and become')
+              p.write_text(s)
+          PY
+          grep -q 'Seat holders mint G-Funds at NAV using USDG.' index.html
+      - name: Commit
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html landing.html
+          git commit -m "Clarify USDG primary mint settlement" || exit 0
+          git push
