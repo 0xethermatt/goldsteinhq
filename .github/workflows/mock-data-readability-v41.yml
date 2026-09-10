@@ -1,0 +1,62 @@
+name: Mock data and readability v4.1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/mock-data-readability-v41.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Apply v4.1 QA patch
+        run: python3 scripts/mock_data_readability_v41.py
+      - name: Validate 12px type floor and mock data
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          files=['index.html','landing.html','app.html','welcome.html','my-seat.html','funds.html','fund-detail.html']
+          bad=[]
+          for name in files:
+              s=Path(name).read_text()
+              for m in re.finditer(r'font-size\s*:\s*(\d+(?:\.\d+)?)px',s):
+                  n=float(m.group(1))
+                  if 0<n<12: bad.append((name,m.group(0)))
+              for m in re.finditer(r'font\s*:[^;{}]+',s):
+                  px=re.search(r'(\d+(?:\.\d+)?)px',m.group(0))
+                  if px and 0<float(px.group(1))<12: bad.append((name,m.group(0)))
+          if bad: raise SystemExit('Type below 12px remains: '+repr(bad[:30]))
+          print('12px minimum verified across all rendered pages')
+          PY
+          grep -q 'Mock data final QA v4.1' funds.html
+          grep -q 'Detail ticket mock sync v4.1' fund-detail.html
+          grep -q 'compositionSlice' fund-detail.html
+          grep -q "NVDA',30" fund-detail.html
+          grep -q "AI',26" fund-detail.html
+      - name: JavaScript syntax check
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,subprocess,tempfile,os
+          files=['index.html','landing.html','app.html','welcome.html','my-seat.html','funds.html','fund-detail.html']
+          for name in files:
+              for b in re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',Path(name).read_text(),re.S):
+                  f=tempfile.NamedTemporaryFile('w',suffix='.js',delete=False);f.write(b);f.close()
+                  try: subprocess.run(['node','--check',f.name],check=True)
+                  finally: os.unlink(f.name)
+          print('All inline JavaScript parses')
+          PY
+      - name: Commit v4.1 QA result
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html landing.html app.html welcome.html my-seat.html funds.html fund-detail.html
+          git commit -m "Finish mock market data and raise site type floor" || exit 0
+          git push
