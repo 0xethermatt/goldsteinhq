@@ -1,0 +1,73 @@
+name: Link Mint and My Seat
+
+on:
+  push:
+    paths:
+      - '.github/workflows/link-main-pages.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  link-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Connect Mint and My Seat navigation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          # Mint page: make Mint + My Seat the first-class page switcher,
+          # while retaining Floor and FAQ as page-local navigation.
+          p = Path('index.html')
+          s = p.read_text()
+          old = '<aside class="sidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a class="active" href="#draw"><span>Reveal</span></a><a href="#firm"><span>The Floor</span></a><a href="#learn"><span>FAQ</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>'
+          new = '<aside class="sidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a class="active" href="/" target="_top"><span>Mint</span></a><a href="/my-seat" target="_top"><span>My Seat</span></a><a href="#firm"><span>The Floor</span></a><a href="#learn"><span>FAQ</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>\n<nav class="pageSwitch mobilePageSwitch" aria-label="Goldstein pages"><a class="active" href="/" target="_top">Mint</a><a href="/my-seat" target="_top">My Seat</a></nav>'
+          if old not in s:
+              raise SystemExit('Mint sidebar anchor not found')
+          s = s.replace(old, new, 1)
+
+          css = '''\n/* Primary page switcher: Mint ↔ My Seat */\n.pageSwitch{display:none}\n@media(max-width:760px){\n  .mobilePageSwitch{position:fixed;z-index:96;top:34px;left:0;right:0;height:54px;padding:8px 12px;display:grid;grid-template-columns:1fr 1fr;gap:7px;border-bottom:1px solid var(--line);background:rgba(10,10,7,.97);backdrop-filter:blur(12px)}\n  .mobilePageSwitch a{display:flex;align-items:center;justify-content:center;border:1px solid #2c281b;border-radius:9px;background:#0d0d09;color:#928a76;text-decoration:none;font-size:12px;font-weight:850}\n  .mobilePageSwitch a.active{border-color:#4e411e;background:#171309;color:#f0d15e}\n  main{padding-top:88px}\n}\n'''
+          s = s.replace('</style>', css + '</style>', 1)
+          p.write_text(s)
+
+          # My Seat page: same first-class page switcher in desktop sidebar,
+          # and expose both destinations in the existing mobile menu.
+          p = Path('my-seat.html')
+          s = p.read_text()
+          old = '''  <nav class="nav">\n    <a class="active" href="#overview"><span>My Seat</span></a>\n    <a href="#stake"><span>Stake</span></a>\n    <a href="#funds"><span>G-Funds</span></a>\n  </nav>'''
+          new = '''  <nav class="nav">\n    <a href="/"><span>Mint</span></a>\n    <a class="active" href="/my-seat"><span>My Seat</span></a>\n    <a href="#stake"><span>Stake</span></a>\n    <a href="#funds"><span>G-Funds</span></a>\n  </nav>'''
+          if old not in s:
+              raise SystemExit('My Seat sidebar anchor not found')
+          s = s.replace(old, new, 1)
+
+          old_mobile = '<nav class="mobileNav" id="mobileNav"><a class="active" href="#overview">My Seat</a><a href="#stake">Stake</a><a href="#funds">G-Funds</a></nav>'
+          new_mobile = '<nav class="mobileNav" id="mobileNav"><a href="/">Mint</a><a class="active" href="/my-seat">My Seat</a><a href="#stake">Stake</a><a href="#funds">G-Funds</a></nav>'
+          if old_mobile not in s:
+              raise SystemExit('My Seat mobile nav anchor not found')
+          s = s.replace(old_mobile, new_mobile, 1)
+
+          # Existing compact-sidebar labels only covered section anchors.
+          # Add route labels so Mint/My Seat remain legible at tablet widths.
+          css2 = '''\n@media(max-width:1050px) and (min-width:761px){\n  .nav a[href="/"]:after{content:"MINT"}\n  .nav a[href="/my-seat"]:after{content:"SEAT"}\n}\n'''
+          s = s.replace('</style>', css2 + '</style>', 1)
+          p.write_text(s)
+          PY
+
+      - name: Validate navigation
+        run: |
+          grep -q 'href="/my-seat" target="_top"' index.html
+          grep -q '<span>Mint</span>' my-seat.html
+          grep -q '<a href="/">Mint</a><a class="active" href="/my-seat">My Seat</a>' my-seat.html
+
+      - name: Commit linked navigation
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html my-seat.html
+          git commit -m "Connect Mint and My Seat navigation" || exit 0
+          git push
