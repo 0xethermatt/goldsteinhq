@@ -1,0 +1,43 @@
+name: Fix fund detail chart spacing
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fund-chart-spacing-v1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Make performance chart fill available card space
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('fund-detail.html')
+          s=p.read_text()
+          css='''\n/* Performance chart spacing v1 */\n.mainGrid{align-items:stretch}\n.chartCard{display:flex;flex-direction:column;min-height:100%}\n.chartCard .cardTitle{flex:0 0 auto}\n.chartCard .chart{flex:1 1 auto;height:auto;min-height:360px}\n@media(max-width:1050px){\n  .chartCard{min-height:auto}\n  .chartCard .chart{height:285px;min-height:285px;flex:none}\n}\n@media(max-width:760px){\n  .chartCard .chart{height:235px;min-height:235px}\n}\n'''
+          marker='</style>'
+          if 'Performance chart spacing v1' not in s:
+              s=s.replace(marker,css+marker,1)
+          p.write_text(s)
+          PY
+
+      - name: Validate
+        run: |
+          grep -q 'Performance chart spacing v1' fund-detail.html
+          grep -q 'chartCard .chart{flex:1 1 auto;height:auto;min-height:360px}' fund-detail.html
+
+      - name: Commit
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add fund-detail.html
+          git commit -m "Make fund performance charts fill their cards" || exit 0
+          git push
