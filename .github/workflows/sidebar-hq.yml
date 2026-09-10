@@ -1,0 +1,36 @@
+name: Apply Goldstein HQ sidebar
+
+on:
+  push:
+    paths:
+      - 'scripts/apply_sidebar_hq.py'
+      - '.github/workflows/sidebar-hq.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply-sidebar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply sidebar patch
+        run: python3 scripts/apply_sidebar_hq.py
+      - name: Validate sidebar
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text()
+          assert '<span class="brandText">Goldstein HQ</span>' in s
+          assert '<div class="brand"><div class="brandViewport">' not in s
+          assert 'secureBtn' in s and 'seatNumber' in s and 'characterName' in s
+          assert 'What happens after I claim a Seat?' in s
+          print('Goldstein HQ sidebar validation passed')
+          PY
+      - name: Commit sidebar update
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html
+          git commit -m "Replace sidebar logo with Goldstein HQ"
+          git push
