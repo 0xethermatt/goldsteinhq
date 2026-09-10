@@ -87,6 +87,25 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @media(max-width:760px){.pageTop{display:grid}.pageActions{width:100%;justify-content:space-between}.rankToggle{height:40px}.seatCore{grid-template-columns:1fr}.seatSummaryCard .seatVisual{min-height:0;padding:24px 18px;border-right:0;border-bottom:1px solid var(--line)}.seatSummaryCard .rankArtFrame{width:min(310px,82vw)}.seatSummaryCard .seatInfo{padding:24px 20px}.seatTopLine{display:grid}.changeSeatTop{justify-self:start}.seatMetricGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px}.rankPreviewHead>span{display:none}.rankPreviewPanel .rankRail{display:flex;overflow-x:auto;scrollbar-width:none}.rankPreviewPanel .rankRail::-webkit-scrollbar{display:none}.rankPreviewPanel .rankThumb{flex:0 0 112px}.rankPreviewPanel .rankThumb .rankArtwork{display:block!important}}
 @media(max-width:480px){.pageActions{align-items:stretch;display:grid;grid-template-columns:1fr auto}.rankToggle{justify-content:center}.seatMetricGrid{grid-template-columns:1fr 1fr}.seatMetric>strong,.metricValueRow strong{font-size:21px}.seatSummaryCard .seatInfo h2{font-size:32px}.rankPreviewPanel .rankThumb{flex-basis:98px}}
 
+
+/* My Seat spacing polish v3 */
+#stake{margin-top:42px}
+.fund{display:flex;flex-direction:column;min-height:240px}
+.fund p{margin-bottom:20px}
+.fundBottom{
+  position:static!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin-top:auto;
+  padding-top:16px;
+  border-top:1px solid #25271b;
+}
+@media(max-width:760px){
+  #stake{margin-top:34px}
+  .fund{min-height:220px}
+  .fundBottom{padding-top:14px}
+}
 </style>
 </head>
 <body>
