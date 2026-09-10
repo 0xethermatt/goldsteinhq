@@ -1,0 +1,42 @@
+name: Apply collapsible Goldstein HQ sidebar
+
+on:
+  push:
+    paths:
+      - '.github/scripts/add_collapsible_sidebar.py'
+      - '.github/workflows/collapsible-sidebar.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Patch app pages
+        run: python3 .github/scripts/add_collapsible_sidebar.py
+      - name: Validate sidebar affordance
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ['app.html','my-seat.html','funds.html','fund-detail.html']:
+              s=Path(name).read_text()
+              assert 'id="sidebarToggle"' in s, name
+              assert 'goldsteinSidebarCollapsed' in s, name
+              assert 'id="appSidebar"' in s, name
+          print('sidebar validation passed')
+          PY
+      - name: Commit
+        run: |
+          if git diff --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add app.html my-seat.html funds.html fund-detail.html
+          git commit -m "Add persistent collapsible app sidebar"
+          git push
