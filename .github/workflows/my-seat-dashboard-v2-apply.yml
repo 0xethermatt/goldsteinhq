@@ -1,4 +1,4 @@
-name: Run corrected My Seat dashboard patch
+name: Run My Seat spacing polish
 
 on:
   push:
@@ -15,38 +15,48 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Apply corrected patch
+
+      - name: Apply spacing fixes
         run: |
-          python3 - <<'PATCH'
+          python3 - <<'PY'
           from pathlib import Path
-          import textwrap
-          wf=Path('.github/workflows/my-seat-dashboard-v2.yml').read_text()
-          code=wf.split("python3 - <<'PY'\n",1)[1].split("\n          PY",1)[0]
-          exec(textwrap.dedent(code))
           p=Path('my-seat.html')
-          p.write_text(p.read_text().replace('\\n','\n'))
-          PATCH
+          s=p.read_text()
+          css='''
+/* My Seat spacing polish v3 */
+#stake{margin-top:42px}
+.fund{display:flex;flex-direction:column;min-height:240px}
+.fund p{margin-bottom:20px}
+.fundBottom{
+  position:static!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin-top:auto;
+  padding-top:16px;
+  border-top:1px solid #25271b;
+}
+@media(max-width:760px){
+  #stake{margin-top:34px}
+  .fund{min-height:220px}
+  .fundBottom{padding-top:14px}
+}
+'''
+          if '/* My Seat spacing polish v3 */' not in s:
+              s=s.replace('</style>',css+'\n</style>',1)
+          p.write_text(s)
+          PY
+
       - name: Validate implementation
         run: |
-          grep -q 'id="rankToggle"' my-seat.html
-          grep -q 'id="rankPreviewPanel" hidden' my-seat.html
-          grep -q 'class="seatMetricGrid"' my-seat.html
-          grep -q 'Gold salary' my-seat.html
-          grep -q 'Fee share' my-seat.html
-          grep -q 'Power rank' my-seat.html
-          grep -q 'Mint capacity' my-seat.html
-          ! grep -q 'setTimeout(playRanks' my-seat.html
-          ! grep -q 'id="replayRank"' my-seat.html
-          node - <<'NODE'
-          const fs=require('fs'),vm=require('vm');
-          const s=fs.readFileSync('my-seat.html','utf8');
-          for(const m of s.matchAll(/<script>([\s\S]*?)<\/script>/g)) new vm.Script(m[1]);
-          console.log('JS syntax OK');
-          NODE
+          grep -q 'My Seat spacing polish v3' my-seat.html
+          grep -q '#stake{margin-top:42px}' my-seat.html
+          grep -q 'position:static!important' my-seat.html
+
       - name: Commit
         run: |
           git config user.name "Goldstein UI Bot"
           git config user.email "actions@users.noreply.github.com"
           git add my-seat.html
-          git commit -m "Simplify My Seat dashboard and rank preview" || exit 0
+          git commit -m "Fix My Seat spacing and G-Fund card footers" || exit 0
           git push
