@@ -1,0 +1,66 @@
+name: Integrate Goldstein NFT artwork
+
+on:
+  push:
+    paths:
+      - '.github/workflows/integrate-nft-artwork.yml'
+      - 'scripts/integrate_nft_artwork.py'
+      - '01.png'
+      - '02.png'
+      - '03.png'
+      - '10.png'
+      - '11.png'
+      - '12.png'
+      - '18.png'
+      - 'b10.png'
+      - 'b17.png'
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply NFT artwork
+        run: python3 scripts/integrate_nft_artwork.py
+      - name: Validate artwork integration
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          app=Path('app.html').read_text()
+          funds=Path('funds.html').read_text()
+          detail=Path('fund-detail.html').read_text()
+          landing=Path('index.html').read_text()
+          for img in ['01.png','02.png','03.png','10.png','11.png','12.png','18.png','b10.png','b17.png']:
+              assert f'src="/{img}"' in app, f'{img} missing from Floor'
+          assert 'Seat B10, manager of gAIX' in funds
+          assert 'Seat B17, manager of gMEMESTONK' in funds
+          assert "meme?'/b17.png':'/b10.png'" in detail
+          assert 'Seat B10</b><small>House manager NFT' in landing
+          assert 'Seat B17</b><small>House manager NFT' in landing
+          print('NFT artwork integration validated')
+          PY
+      - name: JS sanity check
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+          for filename in ['index.html','app.html','welcome.html','my-seat.html','funds.html','fund-detail.html']:
+              html=Path(filename).read_text()
+              ids=re.findall(r'\bid=["\']([^"\']+)["\']',html)
+              dup=sorted({x for x in ids if ids.count(x)>1})
+              if dup: raise SystemExit(f'{filename}: duplicate IDs: {dup}')
+              for i,js in enumerate(re.findall(r'<script[^>]*>(.*?)</script>',html,re.S)):
+                  tmp=Path('/tmp')/f'{filename}-{i}.js';tmp.write_text(js)
+                  subprocess.run(['node','--check',str(tmp)],check=True)
+          print('DOM IDs and JS syntax OK')
+          PY
+      - name: Commit NFT artwork integration
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add app.html funds.html fund-detail.html index.html landing.html
+          git commit -m "Integrate legendary NFTs across Goldstein UI" || exit 0
+          git push
