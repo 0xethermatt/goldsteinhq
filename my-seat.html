@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#080806" />
 <title>Goldstein HQ — My Seat</title>
 <meta name="description" content="Goldstein HQ Seat dashboard prototype." />
+<link rel="stylesheet" href="/assets/rank-sprite.css" />
 <style>
 :root{--bg:#080806;--panel:#11100b;--panel2:#0d0c09;--line:#2b2719;--line2:#40371f;--gold:#d8b43f;--gold2:#f3ce4a;--text:#f4f1e8;--muted:#aaa28d;--soft:#7f7868;--green:#8fe3aa;--red:#f19a9f;--side:216px;--shadow:0 24px 80px rgba(0,0,0,.28)}
 *{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}button,input,a{font:inherit}button{cursor:pointer}h1,h2,h3{font-family:Georgia,"Times New Roman",serif}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
@@ -24,6 +25,29 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 }
 
 @media(max-width:1050px) and (min-width:761px){.nav a[href="/funds"]:after{content:"FUNDS"}}
+
+/* Seat rank progression — artwork from the supplied Rabbi Schlomo Goldstein reference */
+.rankSeatCard{grid-template-columns:390px 1fr;grid-template-rows:auto 1fr}
+.rankSeatCard:after{display:none}
+.rankRail{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,1fr);gap:7px;padding:11px 12px;border-bottom:1px solid var(--line);background:#0b0b07}
+.rankThumb{min-width:0;border:1px solid #282419;border-radius:9px;background:#0e0e0a;color:#8d8572;padding:6px;transition:.18s;text-align:left}
+.rankThumb:hover{border-color:#4b4022;transform:translateY(-1px)}
+.rankThumb.active{border-color:#82691f;background:#171309;color:#efd05a;box-shadow:inset 0 0 0 1px rgba(216,180,63,.11)}
+.rankThumb .rankArtwork{display:block;width:100%;aspect-ratio:171/145;border-radius:6px;border:1px solid rgba(255,255,255,.04)}
+.rankThumb b{display:block;margin-top:6px;font:850 8px/1.15 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rankSeatCard .seatVisual{min-height:350px;padding:24px 22px;display:flex;flex-direction:column;gap:11px;align-items:center;justify-content:center}
+.rankArtFrame{position:relative;width:min(300px,100%);filter:drop-shadow(0 22px 44px rgba(0,0,0,.32))}
+.rankSeatArt{width:100%;aspect-ratio:171/145;border:1px solid #6b5620;border-radius:18px;box-shadow:inset 0 0 0 6px #090906;transition:opacity .22s ease,transform .22s ease,filter .22s ease}
+.rankSeatArt.changing{opacity:.38;transform:scale(.985);filter:blur(1px)}
+.rankOverlay{position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;border:1px solid rgba(229,192,65,.38);border-radius:9px;background:rgba(7,7,5,.82);backdrop-filter:blur(8px)}
+.rankOverlay span{color:#988d70;font:800 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase}.rankOverlay strong{color:#f0cf58;font:850 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase}
+.rankCue{color:#766e5d;font-size:9px;letter-spacing:.09em;text-transform:uppercase;text-align:center}
+.rankCurrent{display:flex;align-items:center;gap:8px;margin-top:14px;color:#d8c274;font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}.rankCurrent i{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 14px rgba(216,180,63,.42)}
+.rankMilestones{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:13px}.rankMilestone{padding:9px 8px;border:1px solid #282419;border-radius:8px;background:#0b0b08;color:#6f6859}.rankMilestone.active{border-color:#5a491c;background:#151208;color:#e2c45a}.rankMilestone b{display:block;font-size:9px}.rankMilestone span{display:block;margin-top:3px;font-size:8px;color:inherit;opacity:.8}.replayRank{margin-left:auto;min-height:38px;padding-inline:12px}
+@media(max-width:1050px){.rankSeatCard{grid-template-columns:320px 1fr}.rankRail{grid-template-columns:repeat(3,1fr)}.rankThumb .rankArtwork{display:none}.rankThumb b{margin-top:0;text-align:center;padding:4px 0}}
+@media(max-width:760px){.rankSeatCard{grid-template-columns:1fr;grid-template-rows:auto auto auto}.rankRail{grid-column:1;display:flex;overflow-x:auto;scrollbar-width:none;padding:9px}.rankRail::-webkit-scrollbar{display:none}.rankThumb{flex:0 0 92px}.rankThumb .rankArtwork{display:block}.rankSeatCard .seatVisual{min-height:300px;border-bottom:1px solid var(--line)}.rankArtFrame{width:min(280px,88vw)}.rankMilestones{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.rankRail{margin:0}.rankThumb{flex-basis:82px}.rankSeatCard .seatVisual{padding:19px 14px}.rankMilestones{grid-template-columns:repeat(2,1fr)}}
+
 </style>
 </head>
 <body>
@@ -45,36 +69,52 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
     <button class="wallet mono" id="walletBtn"><i></i>0x71…9A3</button>
   </header>
 
-  <section class="seatCard" aria-label="Active Goldstein Seat">
-    <div class="seatVisual"><div class="portrait"><span>The Value Broker</span></div></div>
+  <section class="seatCard rankSeatCard" aria-label="Active Goldstein Seat">
+    <div class="rankRail" id="rankRail" aria-label="Seat rank preview">
+      <button class="rankThumb" data-rank="0"><span class="rankArtwork rank-intern"></span><b>Intern</b></button>
+      <button class="rankThumb" data-rank="1"><span class="rankArtwork rank-analyst"></span><b>Analyst</b></button>
+      <button class="rankThumb" data-rank="2"><span class="rankArtwork rank-associate"></span><b>Associate</b></button>
+      <button class="rankThumb" data-rank="3"><span class="rankArtwork rank-vp"></span><b>VP</b></button>
+      <button class="rankThumb" data-rank="4"><span class="rankArtwork rank-md"></span><b>MD</b></button>
+      <button class="rankThumb" data-rank="5"><span class="rankArtwork rank-partner"></span><b>Partner</b></button>
+    </div>
+    <div class="seatVisual">
+      <div class="rankArtFrame">
+        <div class="rankArtwork rank-associate rankSeatArt" id="rankArt" role="img" aria-label="Rabbi Schlomo Goldstein rank artwork"></div>
+        <div class="rankOverlay"><span class="mono">Rank preview</span><strong id="visualRank">Associate</strong></div>
+      </div>
+      <div class="rankCue mono" id="rankCue">Rank follows staked $GLDSTN</div>
+    </div>
     <div class="seatInfo">
       <div class="seatStatus mono"><i></i> Active seat</div>
-      <h2>The Value Broker</h2>
-      <div class="seatNo mono">SEAT #0354</div>
-      <div class="traits">Patient · Calculated · Relentless</div>
-      <p class="seatCopy">Your Seat is your persistent identity inside Goldstein. Stake $GLDSTN to build rank, increase mint capacity and participate in the economics of the firm.</p>
-      <div class="seatActions"><button class="btn btnSecondary" id="changeSeat">Change Seat</button><button class="btn btnGhost" id="viewNft">View Seat NFT</button></div>
+      <h2>Rabbi Schlomo Goldstein</h2>
+      <div class="seatNo mono">SEAT #0018</div>
+      <div class="rankCurrent mono"><i></i><span id="seatRankName">Associate</span></div>
+      <div class="traits">Seeking Opportunities</div>
+      <p class="seatCopy">Stake $GLDSTN to rank this Seat from Intern to Partner.</p>
+      <div class="seatActions"><button class="btn btnSecondary" id="changeSeat">Change Seat</button><button class="btn btnGhost replayRank" id="replayRank">Preview ranks</button></div>
     </div>
   </section>
 
   <section class="stats" aria-label="Seat summary">
-    <div class="stat"><div class="statLabel mono">Rank</div><div class="statValue" id="rankValue">Rank I</div><div class="statSub">2,500 $GLDSTN to Rank II</div></div>
-    <div class="stat"><div class="statLabel mono">Staked</div><div class="statValue"><span id="stakedTop">12,500</span></div><div class="statSub">$GLDSTN assigned to this Seat</div></div>
-    <div class="stat"><div class="statLabel mono">Mint capacity</div><div class="statValue">2 / 5</div><div class="statSub">Primary G-Fund capacity · simulated</div></div>
+    <div class="stat"><div class="statLabel mono">Rank</div><div class="statValue" id="rankValue">Associate</div><div class="statSub" id="rankNextTop">2,500 $GLDSTN to VP</div></div>
+    <div class="stat"><div class="statLabel mono">Staked</div><div class="statValue"><span id="stakedTop">12,500</span></div><div class="statSub">$GLDSTN assigned to Seat #18</div></div>
+    <div class="stat"><div class="statLabel mono">Mint capacity</div><div class="statValue" id="capacityValue">3 slots</div><div class="statSub">Prototype capacity · scales with rank</div></div>
   </section>
 
   <section id="stake">
-    <div class="sectionHead"><div><div class="eyebrow mono">Your position</div><h2>Build your rank.</h2><p>Stake $GLDSTN to increase the operating power of your Seat.</p></div><div class="sim mono">Simulated values</div></div>
+    <div class="sectionHead"><div><div class="eyebrow mono">Your position</div><h2>Stake to rank up.</h2></div><div class="sim mono">Prototype thresholds</div></div>
     <div class="positionGrid">
       <article class="stakeCard">
-        <div class="stakeTop"><div><b>$GLDSTN staked</b><div style="margin-top:5px;color:#817968;font-size:12px">Rank progression is tied to this Seat.</div></div><div class="stakeAmount"><span id="stakedAmount">12,500</span><small>$GLDSTN</small></div></div>
-        <div class="progressWrap"><div class="progressLabels"><span>Rank I</span><span id="rankProgress">12,500 / 15,000</span><span>Rank II</span></div><div class="progress"><i id="progressBar"></i></div></div>
+        <div class="stakeTop"><div><b>$GLDSTN staked</b></div><div class="stakeAmount"><span id="stakedAmount">12,500</span><small>$GLDSTN</small></div></div>
+        <div class="progressWrap"><div class="progressLabels"><span id="rankLeft">Associate</span><span id="rankProgress">12,500 / 15,000</span><span id="rankRight">VP</span></div><div class="progress"><i id="progressBar"></i></div></div>
+        <div class="rankMilestones" id="rankMilestones"></div>
         <div class="stakeForm"><input id="stakeInput" inputmode="decimal" placeholder="Amount in $GLDSTN" aria-label="Stake amount"><button class="btn btnGold" id="stakeBtn">Stake</button><button class="btn btnSecondary" id="unstakeBtn">Unstake</button></div>
       </article>
       <aside class="economicsCard" aria-label="Seat economics">
-        <div class="economic"><small class="mono">Fee share</small><strong>Active tier</strong><span>Scales with Seat rank.</span></div>
-        <div class="economic"><small class="mono">Gold salary</small><strong>Base tier</strong><span>Paid in tokenized gold at the active rank.</span></div>
-        <div class="economic"><small class="mono">Primary minting</small><strong>Enabled</strong><span>Mint eligible G-Funds at NAV.</span></div>
+        <div class="economic"><small class="mono">Fee share</small><strong id="feeTier">Associate tier</strong><span>Scales with rank.</span></div>
+        <div class="economic"><small class="mono">Gold salary</small><strong id="salaryTier">Associate tier</strong><span>Paid at the active rank.</span></div>
+        <div class="economic"><small class="mono">Primary minting</small><strong>Enabled</strong><span>Mint G-Funds at NAV.</span></div>
       </aside>
     </div>
   </section>
@@ -84,22 +124,103 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
     <div class="fundGrid">
       <article class="fund"><div class="fundTag"><span class="fundTicker mono">gAIX</span><span class="available mono">Available</span></div><h3>Goldstein AI Index</h3><p>AI infrastructure and frontier-technology exposure managed as an onchain index.</p><div class="fundBottom"><span class="navPrice mono">Mint at NAV</span><button data-fund="gAIX">Mint →</button></div></article>
       <article class="fund"><div class="fundTag"><span class="fundTicker mono">gMEMESTONK</span><span class="available mono">Available</span></div><h3>Meme Index</h3><p>Agent-managed basket built around liquid internet-native and meme-market exposure.</p><div class="fundBottom"><span class="navPrice mono">Mint at NAV</span><button data-fund="gMEMESTONK">Mint →</button></div></article>
-      <article class="fund"><div class="fundTag"><span class="fundTicker mono">gPRESERVE</span><span class="available mono">Available</span></div><h3>Preserve</h3><p>Defensive allocation combining gold, short-duration sovereign exposure and stable yield.</p><div class="fundBottom"><span class="navPrice mono">Mint at NAV</span><button data-fund="gPRESERVE">Mint →</button></div></article>
+      <article class="fund"><div class="fundTag"><span class="fundTicker mono">gPRESERVE</span><span class="available mono" style="color:#8b826e">Coming soon</span></div><h3>Preserve</h3><p>Defensive allocation combining gold, short-duration sovereign exposure and stable yield.</p><div class="fundBottom"><span class="navPrice mono">Not live</span><button data-fund="gPRESERVE" disabled>Coming soon</button></div></article>
     </div>
   </section>
 </div></main>
 <div class="toast" id="toast"></div>
 <script>
 (()=>{
-const $=id=>document.getElementById(id);let staked=12500;const target=15000;
+const $=id=>document.getElementById(id);
+const ranks=[
+  {key:'intern',label:'Intern',min:0,next:1000,capacity:1},
+  {key:'analyst',label:'Analyst',min:1000,next:5000,capacity:2},
+  {key:'associate',label:'Associate',min:5000,next:15000,capacity:3},
+  {key:'vp',label:'VP',min:15000,next:40000,capacity:5},
+  {key:'md',label:'MD',min:40000,next:100000,capacity:8},
+  {key:'partner',label:'Partner',min:100000,next:null,capacity:12}
+];
+let staked=Number(localStorage.getItem('goldsteinSeatStake')||12500);
+if(!Number.isFinite(staked)||staked<0)staked=12500;
+let previewTimer=null,previewReturn=null,actualRank=0;
 const toast=t=>{$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('toast').classList.remove('show'),1800)};
-function renderStake(){const pct=Math.max(0,Math.min(100,(staked/target)*100));$('stakedAmount').textContent=staked.toLocaleString();$('stakedTop').textContent=staked.toLocaleString();$('rankProgress').textContent=`${staked.toLocaleString()} / ${target.toLocaleString()}`;$('progressBar').style.width=pct+'%';if(staked>=target){$('rankValue').textContent='Rank II';document.querySelector('.statSub').textContent='Rank II unlocked · simulated';}}
+const fmt=n=>Math.round(n).toLocaleString();
+const rankForStake=v=>{for(let i=ranks.length-1;i>=0;i--)if(v>=ranks[i].min)return i;return 0};
+function setVisualRank(i,preview=false){
+  const r=ranks[i],art=$('rankArt');
+  art.classList.add('changing');
+  setTimeout(()=>{art.className=`rankArtwork rank-${r.key} rankSeatArt`;},90);
+  setTimeout(()=>art.classList.remove('changing'),220);
+  $('visualRank').textContent=r.label;
+  $('rankCue').textContent=preview?`Preview · ${r.label}`:'Rank follows staked $GLDSTN';
+  document.querySelectorAll('.rankThumb').forEach((b,x)=>b.classList.toggle('active',x===i));
+}
+function renderMilestones(){
+  $('rankMilestones').innerHTML=ranks.map((r,i)=>`<div class="rankMilestone ${i===actualRank?'active':''}"><b class="mono">${r.label}</b><span class="mono">${fmt(r.min)}+</span></div>`).join('');
+}
+function renderStake(animate=true){
+  const previous=actualRank;
+  actualRank=rankForStake(staked);
+  const r=ranks[actualRank];
+  $('stakedAmount').textContent=fmt(staked);
+  $('stakedTop').textContent=fmt(staked);
+  $('rankValue').textContent=r.label;
+  $('seatRankName').textContent=r.label;
+  $('capacityValue').textContent=`${r.capacity} ${r.capacity===1?'slot':'slots'}`;
+  $('feeTier').textContent=`${r.label} tier`;
+  $('salaryTier').textContent=`${r.label} tier`;
+  $('rankLeft').textContent=r.label;
+  if(r.next){
+    const nextRank=ranks[actualRank+1];
+    $('rankRight').textContent=nextRank.label;
+    $('rankProgress').textContent=`${fmt(staked)} / ${fmt(r.next)}`;
+    $('rankNextTop').textContent=`${fmt(Math.max(0,r.next-staked))} $GLDSTN to ${nextRank.label}`;
+    const pct=((staked-r.min)/(r.next-r.min))*100;
+    $('progressBar').style.width=Math.max(0,Math.min(100,pct))+'%';
+  }else{
+    $('rankRight').textContent='Top rank';
+    $('rankProgress').textContent='Partner unlocked';
+    $('rankNextTop').textContent='Highest rank';
+    $('progressBar').style.width='100%';
+  }
+  renderMilestones();
+  if(!previewTimer&&!previewReturn)setVisualRank(actualRank,false);
+  localStorage.setItem('goldsteinSeatStake',String(staked));
+  if(animate&&previous!==actualRank)toast(`${r.label} rank unlocked · simulated.`);
+}
+function stopPreview(){
+  clearInterval(previewTimer);clearTimeout(previewReturn);previewTimer=null;previewReturn=null;setVisualRank(actualRank,false);
+}
+function previewRank(i,hold=1500){
+  clearInterval(previewTimer);clearTimeout(previewReturn);previewTimer=null;
+  setVisualRank(i,true);
+  previewReturn=setTimeout(()=>{previewReturn=null;setVisualRank(actualRank,false)},hold);
+}
+function playRanks(){
+  clearInterval(previewTimer);clearTimeout(previewReturn);previewReturn=null;
+  let i=0;setVisualRank(i,true);
+  previewTimer=setInterval(()=>{
+    i++;
+    if(i>=ranks.length){
+      clearInterval(previewTimer);previewTimer=null;
+      previewReturn=setTimeout(()=>{previewReturn=null;setVisualRank(actualRank,false)},650);
+      return;
+    }
+    setVisualRank(i,true);
+  },720);
+}
 function amount(){const v=Number(String($('stakeInput').value).replace(/,/g,''));return Number.isFinite(v)&&v>0?v:0}
-$('stakeBtn').onclick=()=>{const v=amount();if(!v)return toast('Enter a $GLDSTN amount.');staked+=v;$('stakeInput').value='';renderStake();toast(`${v.toLocaleString()} $GLDSTN staked · simulated.`)};
-$('unstakeBtn').onclick=()=>{const v=amount();if(!v)return toast('Enter a $GLDSTN amount.');staked=Math.max(0,staked-v);$('stakeInput').value='';renderStake();toast(`${v.toLocaleString()} $GLDSTN unstaked · simulated.`)};
-$('changeSeat').onclick=()=>toast('One active Seat in this prototype.');$('viewNft').onclick=()=>toast('Seat NFT viewer will open here.');$('walletBtn').onclick=()=>toast('Wallet connected · simulated.');
-document.querySelectorAll('.fund button').forEach(b=>b.onclick=()=>toast(`${b.dataset.fund} mint flow · simulated.`));
-$('mobileMenu').onclick=()=>$('mobileNav').classList.toggle('show');document.querySelectorAll('#mobileNav a').forEach(a=>a.onclick=()=>{$('mobileNav').classList.remove('show');document.querySelectorAll('#mobileNav a').forEach(x=>x.classList.remove('active'));a.classList.add('active')});document.querySelectorAll('.nav a').forEach(a=>a.onclick=()=>{document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active'));a.classList.add('active')});renderStake();
+$('stakeBtn').onclick=()=>{stopPreview();const v=amount();if(!v)return toast('Enter a $GLDSTN amount.');staked+=v;$('stakeInput').value='';renderStake();toast(`${fmt(v)} $GLDSTN staked · simulated.`)};
+$('unstakeBtn').onclick=()=>{stopPreview();const v=amount();if(!v)return toast('Enter a $GLDSTN amount.');staked=Math.max(0,staked-v);$('stakeInput').value='';renderStake();toast(`${fmt(v)} $GLDSTN unstaked · simulated.`)};
+$('replayRank').onclick=playRanks;
+document.querySelectorAll('.rankThumb').forEach((b,i)=>b.onclick=()=>previewRank(i));
+$('changeSeat').onclick=()=>toast('One active Seat in this prototype.');
+$('walletBtn').onclick=()=>toast('Wallet connected · simulated.');
+document.querySelectorAll('.fund button:not(:disabled)').forEach(b=>b.onclick=()=>{const path=b.dataset.fund==='gAIX'?'/funds/gaix':'/funds/gmemestonk';location.href=path});
+$('mobileMenu').onclick=()=>$('mobileNav').classList.toggle('show');
+document.querySelectorAll('#mobileNav a').forEach(a=>a.onclick=()=>$('mobileNav').classList.remove('show'));
+renderStake(false);
+setTimeout(playRanks,520);
 })();
 </script>
 </body>
