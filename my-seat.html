@@ -8,6 +8,14 @@
 <link rel="preload" href="/2_intern.png" as="image" />
 <title>Goldstein HQ — My Seat</title>
 <meta name="description" content="Goldstein HQ Seat dashboard prototype." />
+<script>
+/* Restore the desktop sidebar preference before first paint. */
+try {
+  if (localStorage.getItem('goldsteinSidebarCollapsed') === '1' && window.matchMedia('(min-width:761px)').matches) {
+    document.documentElement.classList.add('sidebarCollapsed');
+  }
+} catch (e) {}
+</script>
 <style>
 :root{--bg:#080806;--panel:#11100b;--panel2:#0d0c09;--line:#2b2719;--line2:#40371f;--gold:#d8b43f;--gold2:#f3ce4a;--text:#f4f1e8;--muted:#aaa28d;--soft:#7f7868;--green:#8fe3aa;--red:#f19a9f;--side:216px;--shadow:0 24px 80px rgba(0,0,0,.28)}
 *{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}button,input,a{font:inherit}button{cursor:pointer}h1,h2,h3{font-family:Georgia,"Times New Roman",serif}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
@@ -106,10 +114,30 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .fund{min-height:220px}
   .fundBottom{padding-top:14px}
 }
+
+/* Collapsible Goldstein HQ sidebar */
+:root{--sidebar-width:216px}
+@media(min-width:761px) and (max-width:1050px){:root{--sidebar-width:88px}}
+@media(min-width:761px){
+  .sidebar{width:var(--sidebar-width)!important;transition:transform .22s cubic-bezier(.2,.75,.25,1),box-shadow .22s ease;will-change:transform}
+  main{transition:margin-left .22s cubic-bezier(.2,.75,.25,1)}
+  .prototype{transition:left .22s cubic-bezier(.2,.75,.25,1)}
+  .sidebarToggle{position:fixed;z-index:101;top:83px;left:calc(var(--sidebar-width) - 19px);width:38px;height:38px;padding:0;display:grid;place-items:center;border:1px solid #4c4022;border-radius:10px;background:linear-gradient(180deg,#17150e,#0d0d09);color:#cfc4a7;box-shadow:0 10px 26px rgba(0,0,0,.28);transition:left .22s cubic-bezier(.2,.75,.25,1),background .16s,border-color .16s,transform .16s;color-scheme:dark}
+  .sidebarToggle:hover{background:#1c180d;border-color:#745e20;color:#f0cf58;transform:translateY(-1px)}
+  .sidebarToggle:focus-visible{outline:2px solid #e8c43f;outline-offset:3px}
+  .sidebarToggle svg{width:18px;height:18px;transition:transform .22s cubic-bezier(.2,.75,.25,1)}
+  html.sidebarCollapsed{--side:0px}
+  html.sidebarCollapsed .sidebar{transform:translateX(calc(-1 * var(--sidebar-width)));box-shadow:none}
+  html.sidebarCollapsed .sidebarToggle{left:12px}
+  html.sidebarCollapsed .sidebarToggle svg{transform:rotate(180deg)}
+}
+@media(max-width:760px){.sidebarToggle{display:none!important}}
+@media(prefers-reduced-motion:reduce){.sidebar,.sidebarToggle,.sidebarToggle svg,main,.prototype{transition:none!important}}
+
 </style>
 </head>
 <body>
-<aside class="sidebar">
+<aside class="sidebar" id="appSidebar">
   <div class="brand"><span class="brandText">Goldstein HQ</span></div>
   <nav class="nav">
     <a href="/app" target="_top"><span>Mint</span></a>
@@ -118,6 +146,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   </nav>
   <div class="sideMeta mono">Seat dashboard · prototype</div>
 </aside>
+<button class="sidebarToggle" id="sidebarToggle" type="button" aria-controls="appSidebar" aria-expanded="true" aria-label="Hide sidebar" title="Hide sidebar">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
 <div class="mobileBar"><div class="mobileBrand">Goldstein HQ</div><button class="mobileMenu" id="mobileMenu">Menu</button></div>
 <nav class="mobileNav" id="mobileNav"><a href="/app" target="_top">Mint</a><a class="active" href="/app/my-seat" target="_top">My Seat</a><a href="/app/funds" target="_top">G-Funds</a></nav>
 <div class="prototype mono">Prototype only — simulated Seat, staking and fund data. No real assets or transactions.</div>
@@ -267,5 +298,35 @@ $('mobileMenu').onclick=()=>$('mobileNav').classList.toggle('show');document.que
 renderStake(false);setPreview(false);
 })();
 </script>
+<script>
+/* Persisted desktop sidebar controller. Mobile keeps the existing menu behavior. */
+(()=>{
+  const root=document.documentElement,btn=document.getElementById('sidebarToggle');
+  if(!btn)return;
+  const mq=window.matchMedia('(min-width:761px)');
+  const stored=()=>{try{return localStorage.getItem('goldsteinSidebarCollapsed')==='1'}catch(e){return false}};
+  const save=v=>{try{localStorage.setItem('goldsteinSidebarCollapsed',v?'1':'0')}catch(e){}};
+  const sync=()=>{
+    const collapsed=mq.matches&&root.classList.contains('sidebarCollapsed');
+    const label=collapsed?'Show sidebar':'Hide sidebar';
+    btn.setAttribute('aria-expanded',String(!collapsed));
+    btn.setAttribute('aria-label',label);
+    btn.title=label;
+  };
+  btn.addEventListener('click',()=>{
+    if(!mq.matches)return;
+    const collapsed=root.classList.toggle('sidebarCollapsed');
+    save(collapsed);sync();
+  });
+  const onBreakpoint=()=>{
+    if(!mq.matches)root.classList.remove('sidebarCollapsed');
+    else root.classList.toggle('sidebarCollapsed',stored());
+    sync();
+  };
+  if(mq.addEventListener)mq.addEventListener('change',onBreakpoint);else mq.addListener(onBreakpoint);
+  onBreakpoint();
+})();
+</script>
+
 </body>
 </html>

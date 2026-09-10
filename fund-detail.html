@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="theme-color" content="#080806" />
 <title>Goldstein HQ — Fund</title>
+<script>
+/* Restore the desktop sidebar preference before first paint. */
+try {
+  if (localStorage.getItem('goldsteinSidebarCollapsed') === '1' && window.matchMedia('(min-width:761px)').matches) {
+    document.documentElement.classList.add('sidebarCollapsed');
+  }
+} catch (e) {}
+</script>
 <style>
 :root{--bg:#080806;--panel:#11100b;--line:#2b2719;--gold:#d8b43f;--text:#f4f1e8;--muted:#918976;--soft:#756e5f;--green:#8fe3aa;--orange:#e6ad6f;--side:216px}*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}button,a{font:inherit}button{cursor:pointer}h1,h2,h3{font-family:Georgia,"Times New Roman",serif}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}.prototype{position:fixed;z-index:80;left:var(--side);right:0;top:0;min-height:34px;padding:7px 18px;display:flex;align-items:center;justify-content:center;background:#9a7d1c;color:#130f03;font-size:12px;font-weight:800;letter-spacing:.105em;text-transform:uppercase;text-align:center}.sidebar{position:fixed;z-index:90;left:0;top:0;bottom:0;width:var(--side);background:#0a0a07;border-right:1px solid var(--line);display:flex;flex-direction:column}.brand{height:72px;display:flex;align-items:center;padding:0 18px;border-bottom:1px solid var(--line)}.brandText{font-size:18px;font-weight:850;letter-spacing:-.025em}.nav{padding:18px 12px;display:grid;gap:7px}.nav a{position:relative;color:#9a927e;text-decoration:none;padding:12px 14px;border-radius:10px;font-size:15px;font-weight:650}.nav a.active{background:#15130b;color:#f0df9d;border:1px solid #292416}.nav a.active:before{content:"";position:absolute;left:-1px;top:12px;bottom:12px;width:3px;border-radius:4px;background:var(--gold)}.sideMeta{margin-top:auto;padding:0 18px 18px;color:#6e685a;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.mobileBar{display:none}main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% - 56px));margin:0 auto;padding:28px 0 80px}.back{display:inline-flex;margin-bottom:18px;color:#a69d88;text-decoration:none;font-size:12px;font-weight:800}.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;margin-bottom:18px}.fundIdentity{display:flex;align-items:center;gap:15px}.pfp{width:64px;height:64px;flex:0 0 auto;border:1px solid #544721;border-radius:15px;background:radial-gradient(circle at 50% 31%,#cb9663 0 18%,transparent 19%),radial-gradient(circle at 50% 55%,#70462d 0 28%,transparent 29%),linear-gradient(145deg,#b68d60,#3b3026);box-shadow:inset 0 0 0 5px #0a0a07}.top.volatile .pfp{background:radial-gradient(circle at 50% 31%,#d29566 0 18%,transparent 19%),radial-gradient(circle at 50% 55%,#8d4a31 0 28%,transparent 29%),linear-gradient(145deg,#9a6540,#31251e)}.eyebrow{color:var(--gold);font-size:12px;font-weight:850;letter-spacing:.15em;text-transform:uppercase}.top h1{margin:5px 0 0;font-size:43px;line-height:1;font-weight:500;letter-spacing:-.04em}.ticker{margin-top:7px;color:var(--green);font-size:13px;font-weight:900}.volatile .ticker{color:var(--orange)}.topActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.btn{height:44px;padding:0 15px;border-radius:9px;font-size:12px;font-weight:900}.lp{border:1px solid #edc83f;background:linear-gradient(#f1cc4b,#d5aa23);color:#130f02}.buy{border:1px solid #4e4428;background:#17140d;color:#e7d9b4}.mint{border:1px solid #343022;background:#0b0b08;color:#9f977f}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:28px}.stat{padding:16px 18px;border:1px solid var(--line);border-radius:11px;background:#0d0d09}.stat small{display:block;color:#6f6859;font-size:12px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.stat strong{display:block;margin-top:6px;color:#e1d8c1;font-size:15px}.mainGrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.5fr);gap:12px;margin-bottom:30px}.card{border:1px solid var(--line);border-radius:15px;background:linear-gradient(180deg,#11100b,#0d0d09)}.chartCard{padding:22px}.cardTitle{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}.cardTitle h2{margin:0;font-size:27px;font-weight:500}.cardTitle span{color:#726b5c;font-size:12px;letter-spacing:.1em;text-transform:uppercase}.chart{height:260px;position:relative;overflow:hidden;border:1px solid #262217;border-radius:11px;background:linear-gradient(to bottom,transparent 24%,#1c1a12 25%,transparent 26%,transparent 49%,#1c1a12 50%,transparent 51%,transparent 74%,#1c1a12 75%,transparent 76%),linear-gradient(to right,transparent 24%,#17150f 25%,transparent 26%,transparent 49%,#17150f 50%,transparent 51%,transparent 74%,#17150f 75%,transparent 76%),#090905}.chart svg{position:absolute;inset:0;width:100%;height:100%}.chartEmpty{position:absolute;left:18px;bottom:16px;color:#6f6859;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.managerCard{padding:22px}.managerRow{display:flex;gap:12px;align-items:center}.managerRow .pfp{width:52px;height:52px;border-radius:12px}.managerCard h3{margin:16px 0 5px;font-size:22px;font-weight:500}.managerCard p{margin:0;color:#817968;font-size:12px}.risk{display:flex;align-items:center;gap:7px;margin-top:15px;color:#817968;font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:.08em}.dots{display:flex;gap:4px}.dots i{width:19px;height:4px;border-radius:999px;background:#2f2a1c}.dots i.on{background:#c7a332}.volatile .dots i.on{background:#c17243}.bottomGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.infoCard{padding:20px}.infoCard h2{margin:0 0 14px;font-size:25px;font-weight:500}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:7px 9px;border:1px solid #302b1d;border-radius:8px;background:#0a0a07;color:#aaa18d;font-size:12px;font-weight:800}.positionRow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.positionItem{padding:13px;border:1px solid #282419;border-radius:9px;background:#0b0b08}.positionItem small{display:block;color:#6d6658;font-size:12px;letter-spacing:.1em;text-transform:uppercase}.positionItem strong{display:block;margin-top:6px;color:#d8cfb7;font-size:13px}.empty{margin-top:12px;color:#756e5f;font-size:12px}.modal{position:fixed;inset:0;z-index:140;display:grid;place-items:center;padding:18px;background:rgba(4,4,3,.78);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:.18s}.modal.show{opacity:1;pointer-events:auto}.ticket{width:min(470px,100%);border:1px solid #4c3f20;border-radius:18px;background:linear-gradient(180deg,#13110b,#0c0c08);overflow:hidden}.ticketHead{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:22px;border-bottom:1px solid #2c2718}.ticketHead small{display:block;color:#c2a741;font-size:12px;font-weight:850;letter-spacing:.14em;text-transform:uppercase}.ticketHead h3{margin:6px 0 0;font-size:27px;font-weight:500}.close{width:38px;height:38px;border:1px solid #39311f;border-radius:9px;background:#0d0c08;color:#c8bea5;font-size:19px}.ticketBody{padding:20px 22px 22px}.ticketRow{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid #252116;color:#857d6a;font-size:12px}.ticketRow b{color:#d9cfb6}.amountWrap{position:relative;margin-top:16px}.amountWrap input{width:100%;height:54px;padding:0 64px 0 14px;border:1px solid #433923;border-radius:11px;background:#090905;color:#eee5cd;outline:none;font-size:18px}.amountWrap span{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#c2a63e;font-size:12px;font-weight:850}.preview{width:100%;height:50px;margin-top:12px;border:1px solid #e8c13d;border-radius:10px;background:linear-gradient(#f0cc4c,#d5aa23);color:#130f02;font-size:12px;font-weight:900}.toast{position:fixed;right:24px;bottom:24px;z-index:160;opacity:0;transform:translateY(9px);transition:.2s;padding:13px 15px;border:1px solid #4b401c;border-radius:11px;background:#15130c;color:#ddd4b9;font-size:13px}.toast.show{opacity:1;transform:none}
 @media(max-width:1050px){:root{--side:88px}.brand{justify-content:center;padding:0}.brandText{font-size:0}.brandText:after{content:"HQ";font-size:16px;font-weight:900;color:#f0df9d}.nav a{text-align:center;padding-inline:8px}.nav a span{display:none}.nav a:after{font:850 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace}.nav a[href="/app"]:after{content:"MINT"}.nav a[href="/app/my-seat"]:after{content:"SEAT"}.nav a[href="/app/funds"]:after{content:"FUNDS"}.sideMeta{display:none}.shell{width:min(980px,calc(100% - 36px))}.mainGrid{grid-template-columns:1fr}}
@@ -76,10 +84,33 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .lpPrimary{width:100%;height:50px;margin-top:12px;border:1px solid #e8c13d;border-radius:10px;background:linear-gradient(#f0cc4c,#d5aa23);color:#130f02;font-size:13px;font-weight:900}.lpFine{margin-top:9px;color:#706858;font-size:12px;text-align:center;line-height:1.5}.simpleTrade[hidden],.lpWorkspace[hidden],.withdrawPane[hidden],.collectPane[hidden],.addPane[hidden]{display:none!important}.simpleTrade{display:grid;gap:10px}.tradeSummary{padding:14px;border:1px solid #30291b;border-radius:11px;background:#0c0c08}.tradeSummary strong{display:block;font:500 23px/1.1 Georgia,'Times New Roman',serif}.tradeSummary span{display:block;margin-top:6px;color:#887f6b;font-size:12px;line-height:1.55}.tradeQuote{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #272318;color:#847c69;font-size:12px}.tradeQuote b{color:#ded4ba}.withdrawQuick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}.withdrawQuick button{height:38px;border:1px solid #342e1e;border-radius:8px;background:#0a0a07;color:#9a917c;font-size:12px;font-weight:850}.withdrawQuick button.active{border-color:#d8b43f;color:#edc94a;background:#171308}.claimGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.claimBox{padding:14px;border:1px solid #30291b;border-radius:10px;background:#090905}.claimBox small{display:block;color:#756d5d;font-size:12px;text-transform:uppercase}.claimBox strong{display:block;margin-top:7px;color:#e1d7bd;font-size:17px}.claimBox.emission strong{color:#8fe3aa}
 @media(max-width:600px){.liquidityTicket{max-height:calc(100vh - 16px)}.lpStats,.aprBreakdown{grid-template-columns:1fr 1fr}.lpStats .lpStat:last-child,.aprBreakdown .aprItem:last-child{grid-column:1/-1}.rangeGrid,.depositGrid{grid-template-columns:1fr}.rangePresets{grid-template-columns:1fr 1fr}.ticketBody{padding:17px}.liquidityTicket .ticketHead{padding:18px}}
 
+
+/* Collapsible Goldstein HQ sidebar */
+:root{--sidebar-width:216px}
+@media(min-width:761px) and (max-width:1050px){:root{--sidebar-width:88px}}
+@media(min-width:761px){
+  .sidebar{width:var(--sidebar-width)!important;transition:transform .22s cubic-bezier(.2,.75,.25,1),box-shadow .22s ease;will-change:transform}
+  main{transition:margin-left .22s cubic-bezier(.2,.75,.25,1)}
+  .prototype{transition:left .22s cubic-bezier(.2,.75,.25,1)}
+  .sidebarToggle{position:fixed;z-index:101;top:83px;left:calc(var(--sidebar-width) - 19px);width:38px;height:38px;padding:0;display:grid;place-items:center;border:1px solid #4c4022;border-radius:10px;background:linear-gradient(180deg,#17150e,#0d0d09);color:#cfc4a7;box-shadow:0 10px 26px rgba(0,0,0,.28);transition:left .22s cubic-bezier(.2,.75,.25,1),background .16s,border-color .16s,transform .16s;color-scheme:dark}
+  .sidebarToggle:hover{background:#1c180d;border-color:#745e20;color:#f0cf58;transform:translateY(-1px)}
+  .sidebarToggle:focus-visible{outline:2px solid #e8c43f;outline-offset:3px}
+  .sidebarToggle svg{width:18px;height:18px;transition:transform .22s cubic-bezier(.2,.75,.25,1)}
+  html.sidebarCollapsed{--side:0px}
+  html.sidebarCollapsed .sidebar{transform:translateX(calc(-1 * var(--sidebar-width)));box-shadow:none}
+  html.sidebarCollapsed .sidebarToggle{left:12px}
+  html.sidebarCollapsed .sidebarToggle svg{transform:rotate(180deg)}
+}
+@media(max-width:760px){.sidebarToggle{display:none!important}}
+@media(prefers-reduced-motion:reduce){.sidebar,.sidebarToggle,.sidebarToggle svg,main,.prototype{transition:none!important}}
+
 </style>
 </head>
 <body>
-<aside class="sidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a href="/app" target="_top"><span>Mint</span></a><a href="/app/my-seat" target="_top"><span>My Seat</span></a><a class="active" href="/app/funds" target="_top"><span>G-Funds</span></a></nav><div class="sideMeta mono">Fund detail · prototype</div></aside>
+<aside class="sidebar" id="appSidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a href="/app" target="_top"><span>Mint</span></a><a href="/app/my-seat" target="_top"><span>My Seat</span></a><a class="active" href="/app/funds" target="_top"><span>G-Funds</span></a></nav><div class="sideMeta mono">Fund detail · prototype</div></aside>
+<button class="sidebarToggle" id="sidebarToggle" type="button" aria-controls="appSidebar" aria-expanded="true" aria-label="Hide sidebar" title="Hide sidebar">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
 <div class="mobileBar"><div class="mobileBrand">Goldstein HQ</div><button class="mobileMenu" id="mobileMenu">Menu</button></div><nav class="mobileNav" id="mobileNav"><a href="/app" target="_top">Mint</a><a href="/app/my-seat" target="_top">My Seat</a><a class="active" href="/app/funds" target="_top">G-Funds</a></nav>
 <div class="prototype mono">Prototype only — mock market & portfolio data. No real assets or transactions.</div>
 <main><div class="shell"><a class="back" href="/app/funds">← G-Funds</a>
@@ -267,5 +298,35 @@ $('preview').onclick=()=>{const v=Number($('amount').value);if(!Number.isFinite(
  $('close').onclick=close;modal.onclick=e=>{if(e.target===modal)close()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('show'))close()});
 })();
 </script>
+<script>
+/* Persisted desktop sidebar controller. Mobile keeps the existing menu behavior. */
+(()=>{
+  const root=document.documentElement,btn=document.getElementById('sidebarToggle');
+  if(!btn)return;
+  const mq=window.matchMedia('(min-width:761px)');
+  const stored=()=>{try{return localStorage.getItem('goldsteinSidebarCollapsed')==='1'}catch(e){return false}};
+  const save=v=>{try{localStorage.setItem('goldsteinSidebarCollapsed',v?'1':'0')}catch(e){}};
+  const sync=()=>{
+    const collapsed=mq.matches&&root.classList.contains('sidebarCollapsed');
+    const label=collapsed?'Show sidebar':'Hide sidebar';
+    btn.setAttribute('aria-expanded',String(!collapsed));
+    btn.setAttribute('aria-label',label);
+    btn.title=label;
+  };
+  btn.addEventListener('click',()=>{
+    if(!mq.matches)return;
+    const collapsed=root.classList.toggle('sidebarCollapsed');
+    save(collapsed);sync();
+  });
+  const onBreakpoint=()=>{
+    if(!mq.matches)root.classList.remove('sidebarCollapsed');
+    else root.classList.toggle('sidebarCollapsed',stored());
+    sync();
+  };
+  if(mq.addEventListener)mq.addEventListener('change',onBreakpoint);else mq.addListener(onBreakpoint);
+  onBreakpoint();
+})();
+</script>
+
 </body>
 </html>
