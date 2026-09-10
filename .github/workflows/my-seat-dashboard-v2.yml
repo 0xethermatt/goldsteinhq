@@ -1,0 +1,91 @@
+name: Rework My Seat dashboard
+
+on:
+  push:
+    paths:
+      - '.github/workflows/my-seat-dashboard-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rebuild My Seat hero and rank preview flow
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p=Path('my-seat.html')
+          s=p.read_text()
+
+          # Page header: compact preview toggle + wallet state.
+          old='''  <header class="pageTop" id="overview">\n    <div><div class="eyebrow mono">Seat dashboard</div><h1>My Seat</h1><p>Your identity, rank and access inside Goldstein.</p></div>\n    <button class="wallet mono" id="walletBtn"><i></i>0x71…9A3</button>\n  </header>'''
+          new='''  <header class="pageTop" id="overview">\n    <div><div class="eyebrow mono">Seat dashboard</div><h1>My Seat</h1><p>Your identity, rank and access inside Goldstein.</p></div>\n    <div class="pageActions">\n      <button class="rankToggle" id="rankToggle" type="button" role="switch" aria-checked="false" aria-controls="rankPreviewPanel"><span class="toggleTrack"><i></i></span><span>Preview ranks</span></button>\n      <button class="wallet mono" id="walletBtn"><i></i>0x71…9A3</button>\n    </div>\n  </header>'''
+          if old not in s: raise SystemExit('page header anchor not found')
+          s=s.replace(old,new,1)
+
+          # Replace the oversized existing Seat card with a compact Adam-inspired data dashboard.
+          start=s.index('  <section class="seatCard rankSeatCard"')
+          end=s.index('  <section class="stats"', start)
+          card='''  <section class="seatCard seatSummaryCard" aria-label="Active Goldstein Seat">\n    <div class="rankPreviewPanel" id="rankPreviewPanel" hidden>\n      <div class="rankPreviewHead"><div><span class="mono">Rank preview</span><b>See how this Seat evolves with stake.</b></div><span class="mono">Select a rank</span></div>\n      <div class="rankRail" id="rankRail" aria-label="Seat rank preview">\n        <button class="rankThumb" data-rank="-1"><span class="rankArtwork rank-base"></span><b>Seat</b></button>\n        <button class="rankThumb" data-rank="0"><span class="rankArtwork rank-intern"></span><b>Intern</b></button>\n        <button class="rankThumb" data-rank="1"><span class="rankArtwork rank-analyst"></span><b>Analyst</b></button>\n        <button class="rankThumb" data-rank="2"><span class="rankArtwork rank-associate"></span><b>Associate</b></button>\n        <button class="rankThumb" data-rank="3"><span class="rankArtwork rank-vp"></span><b>VP</b></button>\n        <button class="rankThumb" data-rank="4"><span class="rankArtwork rank-md"></span><b>MD</b></button>\n        <button class="rankThumb" data-rank="5"><span class="rankArtwork rank-partner"></span><b>Partner</b></button>\n      </div>\n    </div>\n\n    <div class="seatCore">\n      <div class="seatVisual">\n        <div class="rankArtFrame">\n          <div class="rankArtwork rank-intern rankSeatArt" id="rankArt" role="img" aria-label="Rabbi Schlomo Goldstein active Seat artwork"></div>\n          <div class="previewBadge mono" id="previewBadge" hidden>Preview · <strong id="visualRank">Intern</strong></div>\n        </div>\n      </div>\n\n      <div class="seatInfo">\n        <div class="seatTopLine">\n          <div><div class="seatNo mono">Seat #0018</div><h2>Rabbi Schlomo Goldstein</h2></div>\n          <button class="btn btnSecondary changeSeatTop" id="changeSeat">Change active seat</button>\n        </div>\n        <div class="seatDivider"></div>\n        <div class="seatMetricGrid">\n          <div class="seatMetric">\n            <small class="mono">Gold salary</small>\n            <div class="metricValueRow"><strong>0.00 <em>GLD</em></strong><button class="collectBtn" disabled>Collect</button></div>\n            <span id="salaryTier">Intern · 1× salary</span>\n          </div>\n          <div class="seatMetric">\n            <small class="mono">Fee share</small>\n            <strong id="feeShareValue">0.10%</strong>\n            <span>Rank-based protocol fee share.</span>\n          </div>\n          <div class="seatMetric">\n            <small class="mono">Power rank</small>\n            <strong id="powerRankValue">#8 of 8</strong>\n            <span>By stake across active Seats.</span>\n          </div>\n          <div class="seatMetric">\n            <small class="mono">Rank</small>\n            <strong class="rankMetric" id="rankValue">Intern</strong>\n            <span id="rankNextTop">1,000 $GLDSTN to Analyst</span>\n          </div>\n          <div class="seatMetric">\n            <small class="mono">Staked</small>\n            <strong><span id="stakedTop">0</span> <em>$GLDSTN</em></strong>\n            <span>Attributed to Seat #18.</span>\n          </div>\n          <div class="seatMetric">\n            <small class="mono">Mint capacity</small>\n            <strong id="capacityValue">$10,000</strong>\n            <span>Primary minting at NAV.</span>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n\n'''
+          s=s[:start]+card+s[end:]
+
+          # Remove the now-duplicative three-card Rank/Staked/Capacity strip.
+          stats_start=s.index('  <section class="stats"')
+          stats_end=s.index('  <section id="stake">', stats_start)
+          s=s[:stats_start]+s[stats_end:]
+
+          # Position section now focuses only on staking; economics already lives in the hero card.
+          econ_start=s.find('      <aside class="economicsCard" aria-label="Seat economics">')
+          if econ_start!=-1:
+            econ_end=s.find('      </aside>',econ_start)
+            if econ_end==-1: raise SystemExit('economics end not found')
+            econ_end += len('      </aside>')
+            s=s[:econ_start]+s[econ_end:]
+
+          # Add late CSS overrides so legacy styles cannot fight the new simplified card.
+          css=r'''\n/* My Seat simplified dashboard v2 — Adam-inspired information hierarchy */\n.pageActions{display:flex;align-items:center;gap:10px}.rankToggle{height:44px;display:inline-flex;align-items:center;gap:9px;padding:0 13px;border:1px solid #51431f;border-radius:999px;background:#151208;color:#e6d6a0;font-size:13px;font-weight:850;white-space:nowrap}.toggleTrack{position:relative;width:32px;height:18px;border:1px solid #4d4228;border-radius:999px;background:#0b0b08;transition:.18s}.toggleTrack i{position:absolute;top:3px;left:3px;width:10px;height:10px;border-radius:50%;background:#7e7767;transition:.18s}.rankToggle[aria-checked="true"]{border-color:#81691f;background:#1c1709;color:#f0cf58}.rankToggle[aria-checked="true"] .toggleTrack{border-color:#967a24;background:#2d250b}.rankToggle[aria-checked="true"] .toggleTrack i{left:17px;background:#f0cf58;box-shadow:0 0 12px rgba(240,207,88,.38)}\n.seatSummaryCard{display:block!important;min-height:0!important;overflow:hidden;border-color:#5b491d;background:radial-gradient(circle at 88% 12%,rgba(216,180,63,.08),transparent 34%),linear-gradient(180deg,#12110b,#0d0d09)}.seatSummaryCard:after{display:none!important}.seatCore{display:grid;grid-template-columns:350px minmax(0,1fr)}.seatSummaryCard .seatVisual{min-height:360px;padding:28px;border-right:1px solid var(--line);background:radial-gradient(circle at 50% 32%,rgba(216,180,63,.10),transparent 50%),#0d0d09}.seatSummaryCard .seatVisual:before{display:none}.seatSummaryCard .rankArtFrame{width:min(292px,100%);filter:drop-shadow(0 22px 45px rgba(0,0,0,.32))}.seatSummaryCard .rankSeatArt{width:100%;aspect-ratio:1/1;border:1px solid #6c5720;border-radius:10px;box-shadow:0 0 0 7px #111008,0 0 0 8px #4d4020;transition:none!important}.previewBadge{position:absolute;left:10px;right:10px;bottom:10px;padding:8px 10px;border:1px solid rgba(231,193,64,.42);border-radius:7px;background:rgba(8,8,5,.88);color:#a39776;text-align:center;font-size:12px;letter-spacing:.09em}.previewBadge strong{color:#f0cf58}.seatSummaryCard .seatInfo{padding:30px 34px 28px;display:block}.seatTopLine{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.seatSummaryCard .seatInfo h2{margin:4px 0 0;font-size:38px;line-height:1.04}.seatSummaryCard .seatNo{color:#8e8674;font-size:13px;font-weight:700;letter-spacing:0;text-transform:none}.changeSeatTop{flex:0 0 auto;min-height:40px;border-radius:999px;color:#efce56;border-color:#614f1b;background:#1b1608}.seatDivider{height:1px;margin:16px 0 18px;background:#30291a}.seatMetricGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 26px}.seatMetric small{display:block;color:#827a68;font-size:12px;font-weight:850;letter-spacing:.14em;text-transform:uppercase}.seatMetric>strong,.metricValueRow strong{display:block;margin-top:6px;color:#f0e8d4;font:600 24px/1.05 Georgia,"Times New Roman",serif}.seatMetric strong em,.metricValueRow strong em{font:700 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#9b927e;font-style:normal}.seatMetric .rankMetric{color:#f0c947}.seatMetric>span,.metricValueRow+span{display:block;margin-top:6px;color:#817968;font-size:12px;line-height:1.4}.metricValueRow{display:flex;align-items:center;gap:10px;margin-top:2px}.metricValueRow strong{margin-top:0}.collectBtn{height:34px;padding:0 12px;border:0;border-radius:8px;background:#0d351c;color:#44b86f;font-size:12px;font-weight:850}.collectBtn:disabled{opacity:.55;cursor:not-allowed}\n.rankPreviewPanel[hidden]{display:none!important}.rankPreviewPanel{padding:13px 14px 14px;border-bottom:1px solid var(--line);background:#0b0b07}.rankPreviewHead{display:flex;align-items:end;justify-content:space-between;gap:18px;padding:0 2px 10px}.rankPreviewHead div span,.rankPreviewHead>span{color:#756e60;font-size:12px;letter-spacing:.12em;text-transform:uppercase}.rankPreviewHead b{display:block;margin-top:3px;color:#cfc5ad;font-size:13px}.rankPreviewPanel .rankRail{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;padding:0;border:0;background:transparent}.rankPreviewPanel .rankThumb{padding:7px;border-radius:9px}.rankPreviewPanel .rankThumb .rankArtwork{display:block!important;aspect-ratio:1/1;border-radius:6px}.rankPreviewPanel .rankThumb b{font-size:12px}.rankPreviewPanel .rankThumb.active{border-color:#8f7220;background:#191408;color:#efcc51}\n.positionGrid{grid-template-columns:1fr!important}.stakeCard{max-width:none}.economicsCard{display:none!important}\n@media(max-width:980px){.seatCore{grid-template-columns:300px minmax(0,1fr)}.seatSummaryCard .seatVisual{min-height:330px;padding:22px}.seatMetricGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.rankPreviewPanel .rankRail{grid-template-columns:repeat(4,minmax(0,1fr))}}\n@media(max-width:760px){.pageTop{display:grid}.pageActions{width:100%;justify-content:space-between}.rankToggle{height:40px}.seatCore{grid-template-columns:1fr}.seatSummaryCard .seatVisual{min-height:0;padding:24px 18px;border-right:0;border-bottom:1px solid var(--line)}.seatSummaryCard .rankArtFrame{width:min(310px,82vw)}.seatSummaryCard .seatInfo{padding:24px 20px}.seatTopLine{display:grid}.changeSeatTop{justify-self:start}.seatMetricGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px}.rankPreviewHead>span{display:none}.rankPreviewPanel .rankRail{display:flex;overflow-x:auto;scrollbar-width:none}.rankPreviewPanel .rankRail::-webkit-scrollbar{display:none}.rankPreviewPanel .rankThumb{flex:0 0 112px}.rankPreviewPanel .rankThumb .rankArtwork{display:block!important}}\n@media(max-width:480px){.pageActions{align-items:stretch;display:grid;grid-template-columns:1fr auto}.rankToggle{justify-content:center}.seatMetricGrid{grid-template-columns:1fr 1fr}.seatMetric>strong,.metricValueRow strong{font-size:21px}.seatSummaryCard .seatInfo h2{font-size:32px}.rankPreviewPanel .rankThumb{flex-basis:98px}}\n'''
+          s=s.replace('</style>',css+'\n</style>',1)
+
+          # Replace page script with a simpler non-animated rank-preview controller.
+          script_start=s.rindex('<script>')
+          script_end=s.index('</script>',script_start)+len('</script>')
+          script=r'''<script>\n(()=>{\nconst $=id=>document.getElementById(id);\nconst baseSeat={key:'base',label:'Seat'};\nconst ranks=[\n  {key:'intern',label:'Intern',min:0,next:1000,capacity:'$10,000',fee:'0.10%',salary:'1× salary',power:'#8 of 8'},\n  {key:'analyst',label:'Analyst',min:1000,next:5000,capacity:'$25,000',fee:'0.20%',salary:'1.2× salary',power:'#6 of 8'},\n  {key:'associate',label:'Associate',min:5000,next:15000,capacity:'$50,000',fee:'0.35%',salary:'1.5× salary',power:'#4 of 8'},\n  {key:'vp',label:'VP',min:15000,next:40000,capacity:'$100,000',fee:'0.55%',salary:'2× salary',power:'#3 of 8'},\n  {key:'md',label:'MD',min:40000,next:100000,capacity:'$250,000',fee:'0.80%',salary:'3× salary',power:'#2 of 8'},\n  {key:'partner',label:'Partner',min:100000,next:null,capacity:'$500,000',fee:'1.10%',salary:'5× salary',power:'#1 of 8'}\n];\nlet staked=Number(localStorage.getItem('goldsteinSeatStakeV2')||0);\nif(!Number.isFinite(staked)||staked<0)staked=0;\nlet actualRank=0,previewOpen=false;\nconst toast=t=>{$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('toast').classList.remove('show'),1800)};\nconst fmt=n=>Math.round(n).toLocaleString();\nconst rankForStake=v=>{for(let i=ranks.length-1;i>=0;i--)if(v>=ranks[i].min)return i;return 0};\nfunction setVisualRank(i,isPreview=false){\n  const r=i<0?baseSeat:ranks[i],art=$('rankArt');\n  art.className=`rankArtwork rank-${r.key} rankSeatArt`;\n  $('visualRank').textContent=r.label;\n  $('previewBadge').hidden=!isPreview;\n  document.querySelectorAll('.rankThumb').forEach(b=>b.classList.toggle('active',Number(b.dataset.rank)===i));\n}\nfunction renderMilestones(){\n  $('rankMilestones').innerHTML=ranks.map((r,i)=>`<div class="rankMilestone ${i===actualRank?'active':''}"><b class="mono">${r.label}</b><span class="mono">${fmt(r.min)}+</span></div>`).join('');\n}\nfunction renderStake(announce=true){\n  const previous=actualRank;actualRank=rankForStake(staked);const r=ranks[actualRank];\n  $('stakedAmount').textContent=fmt(staked);$('stakedTop').textContent=fmt(staked);$('rankValue').textContent=r.label;$('capacityValue').textContent=r.capacity;$('feeShareValue').textContent=r.fee;$('powerRankValue').textContent=r.power;$('salaryTier').textContent=`${r.label} · ${r.salary}`;$('rankLeft').textContent=r.label;\n  if(r.next){const next=ranks[actualRank+1];$('rankRight').textContent=next.label;$('rankProgress').textContent=`${fmt(staked)} / ${fmt(r.next)}`;$('rankNextTop').textContent=`${fmt(Math.max(0,r.next-staked))} $GLDSTN to ${next.label}`;const pct=((staked-r.min)/(r.next-r.min))*100;$('progressBar').style.width=Math.max(0,Math.min(100,pct))+'%';}\n  else{$('rankRight').textContent='Top rank';$('rankProgress').textContent='Partner unlocked';$('rankNextTop').textContent='Highest rank';$('progressBar').style.width='100%';}\n  renderMilestones();if(!previewOpen)setVisualRank(actualRank,false);localStorage.setItem('goldsteinSeatStakeV2',String(staked));if(announce&&previous!==actualRank)toast(`${r.label} rank unlocked · simulated.`);\n}\nfunction setPreview(open){\n  previewOpen=open;$('rankPreviewPanel').hidden=!open;$('rankToggle').setAttribute('aria-checked',String(open));\n  if(open){setVisualRank(actualRank,true);$('rankPreviewPanel').scrollIntoView({behavior:'smooth',block:'nearest'});}else{setVisualRank(actualRank,false);}\n}\nfunction amount(){const v=Number(String($('stakeInput').value).replace(/,/g,''));return Number.isFinite(v)&&v>0?v:0}\n$('rankToggle').onclick=()=>setPreview(!previewOpen);\ndocument.querySelectorAll('.rankThumb').forEach(b=>b.onclick=()=>{if(!previewOpen)return;setVisualRank(Number(b.dataset.rank),true)});\n$('stakeBtn').onclick=()=>{setPreview(false);const v=amount();if(!v)return toast('Enter a $GLDSTN amount.');staked+=v;$('stakeInput').value='';renderStake();toast(`${fmt(v)} $GLDSTN staked · simulated.`)};\n$('unstakeBtn').onclick=()=>{setPreview(false);const v=amount();if(!v)return toast('Enter a $GLDSTN amount.');staked=Math.max(0,staked-v);$('stakeInput').value='';renderStake();toast(`${fmt(v)} $GLDSTN unstaked · simulated.`)};\n$('changeSeat').onclick=()=>toast('Seat selector opens here in the full app.');$('walletBtn').onclick=()=>toast('Wallet connected · simulated.');\ndocument.querySelectorAll('.fund button:not(:disabled)').forEach(b=>b.onclick=()=>{location.href=b.dataset.fund==='gAIX'?'/app/funds/gaix':'/app/funds/gmemestonk'});\n$('mobileMenu').onclick=()=>$('mobileNav').classList.toggle('show');document.querySelectorAll('#mobileNav a').forEach(a=>a.onclick=()=>$('mobileNav').classList.remove('show'));\nrenderStake(false);setPreview(false);\n})();\n</script>'''
+          s=s[:script_start]+script+s[script_end:]
+          p.write_text(s)
+          PY
+
+      - name: Validate simplified dashboard
+        run: |
+          grep -q 'id="rankToggle"' my-seat.html
+          grep -q 'id="rankPreviewPanel" hidden' my-seat.html
+          grep -q 'class="seatMetricGrid"' my-seat.html
+          grep -q 'Gold salary' my-seat.html
+          grep -q 'Fee share' my-seat.html
+          grep -q 'Power rank' my-seat.html
+          grep -q 'Mint capacity' my-seat.html
+          grep -q "rank-base" my-seat.html
+          grep -q "rank-partner" my-seat.html
+          grep -q 'setPreview(false);' my-seat.html
+          ! grep -q 'setTimeout(playRanks' my-seat.html
+          ! grep -q 'id="replayRank"' my-seat.html
+          node - <<'NODE'
+          const fs=require('fs'),vm=require('vm');
+          const s=fs.readFileSync('my-seat.html','utf8');
+          for(const m of s.matchAll(/<script>([\s\S]*?)<\/script>/g)){new vm.Script(m[1])}
+          console.log('JS syntax OK')
+          NODE
+
+      - name: Commit implementation
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add my-seat.html
+          git commit -m "Simplify My Seat dashboard and rank preview" || exit 0
+          git push
