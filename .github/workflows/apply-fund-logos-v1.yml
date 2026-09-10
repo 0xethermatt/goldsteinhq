@@ -1,0 +1,57 @@
+name: Apply house-fund logos v1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-fund-logos-v1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Apply house-fund logos
+        run: python3 scripts/apply_fund_logos_v1.py
+      - name: Validate logo files and references
+        run: |
+          test -f gAIX.png
+          test -f gMEMESTOCK.png
+          test -f gDefensive.png
+          grep -q '/gAIX.png' funds.html
+          grep -q '/gMEMESTOCK.png' funds.html
+          grep -q '/gDefensive.png' funds.html
+          grep -q '/gAIX.png' fund-detail.html
+          grep -q '/gMEMESTOCK.png' fund-detail.html
+          grep -q '/gAIX.png' my-seat.html
+          grep -q '/gMEMESTOCK.png' my-seat.html
+          grep -q '/gDefensive.png' my-seat.html
+          grep -q '/gAIX.png' index.html
+          grep -q '/gMEMESTOCK.png' index.html
+          grep -q '/gDefensive.png' index.html
+          grep -q '/gAIX.png' landing.html
+          grep -q '/gMEMESTOCK.png' landing.html
+          grep -q '/gDefensive.png' landing.html
+      - name: JavaScript syntax check
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess, tempfile
+          for name in ['funds.html','fund-detail.html','my-seat.html','index.html','landing.html']:
+              s=Path(name).read_text()
+              for block in re.findall(r'<script>(.*?)</script>',s,re.S):
+                  f=tempfile.NamedTemporaryFile('w',suffix='.js',delete=False)
+                  f.write(block); f.close()
+                  subprocess.run(['node','--check',f.name],check=True)
+          PY
+      - name: Commit house-fund logo integration
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add funds.html fund-detail.html my-seat.html index.html landing.html
+          git commit -m "Use new logos across Goldstein house funds" || exit 0
+          git push
