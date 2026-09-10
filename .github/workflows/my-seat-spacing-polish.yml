@@ -1,0 +1,64 @@
+name: Polish My Seat spacing and fund card footers
+
+on:
+  push:
+    paths:
+      - '.github/workflows/my-seat-spacing-polish.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Apply spacing polish
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('my-seat.html')
+          s = p.read_text()
+
+          css = r'''
+/* My Seat spacing polish v3 */
+#stake{margin-top:42px}
+.fund{display:flex;flex-direction:column;min-height:240px}
+.fund p{margin-bottom:20px}
+.fundBottom{
+  position:static!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin-top:auto;
+  padding-top:16px;
+  border-top:1px solid #25271b;
+}
+@media(max-width:760px){
+  #stake{margin-top:34px}
+  .fund{min-height:220px}
+  .fundBottom{padding-top:14px}
+}
+'''
+          if '/* My Seat spacing polish v3 */' not in s:
+              s = s.replace('</style>', css + '\n</style>', 1)
+          p.write_text(s)
+          PY
+
+      - name: Validate
+        run: |
+          grep -q 'My Seat spacing polish v3' my-seat.html
+          grep -q '#stake{margin-top:42px}' my-seat.html
+          grep -q 'position:static!important' my-seat.html
+
+      - name: Commit
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add my-seat.html
+          git commit -m "Fix My Seat section spacing and fund footer overlap" || exit 0
+          git push
