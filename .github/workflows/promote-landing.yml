@@ -1,0 +1,56 @@
+name: Promote Goldstein landing homepage
+
+on:
+  push:
+    paths:
+      - '.github/workflows/promote-landing.yml'
+      - 'scripts/promote_landing_home.py'
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Promote landing and preserve app
+        run: python3 scripts/promote_landing_home.py
+      - name: Validate site/app split
+        run: |
+          grep -q 'The investment firm' index.html
+          grep -q 'Free Seat Reveal' app.html
+          grep -q 'src="/app.html" title="Goldstein mint"' welcome.html
+          grep -q 'href="/app" target="_top"' app.html
+          python3 - <<'PY'
+          import json
+          j=json.load(open('vercel.json'))
+          routes={x['source']:x['destination'] for x in j['rewrites']}
+          assert '/' not in routes
+          assert routes['/app']=='/welcome.html'
+          assert routes['/app/my-seat']=='/my-seat.html'
+          assert routes['/app/funds']=='/funds.html'
+          print('Homepage/app split OK')
+          PY
+      - name: JS sanity check
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+          for filename in ['index.html','app.html','welcome.html','my-seat.html','funds.html','fund-detail.html']:
+              html=Path(filename).read_text()
+              ids=re.findall(r'\bid=["\']([^"\']+)["\']',html)
+              dup=sorted({x for x in ids if ids.count(x)>1})
+              if dup: raise SystemExit(f'{filename}: duplicate IDs: {dup}')
+              for i,js in enumerate(re.findall(r'<script[^>]*>(.*?)</script>',html,re.S)):
+                  tmp=Path('/tmp')/f'{filename}-{i}.js';tmp.write_text(js)
+                  subprocess.run(['node','--check',str(tmp)],check=True)
+          print('DOM IDs and JS syntax OK')
+          PY
+      - name: Commit homepage architecture
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html app.html welcome.html vercel.json
+          git commit -m "Make landing page the Goldstein Group homepage" || exit 0
+          git push
