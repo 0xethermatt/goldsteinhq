@@ -41,6 +41,25 @@ jobs:
           grep -q 'drawRankArtwork' welcome.html
           grep -q 'background-size:693.529% 314.118%' assets/rank-sprite.css
 
+      - name: JavaScript and DOM sanity check
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess, tempfile
+          for filename in ['index.html','my-seat.html','welcome.html']:
+              html=Path(filename).read_text()
+              ids=re.findall(r'\bid=["\']([^"\']+)["\']',html)
+              dup=sorted({x for x in ids if ids.count(x)>1})
+              if dup:
+                  raise SystemExit(f'{filename}: duplicate IDs: {dup}')
+              scripts=re.findall(r'<script[^>]*>(.*?)</script>',html,re.S)
+              for i,js in enumerate(scripts):
+                  tmp=Path('/tmp')/f'{filename.replace(".","-")}-{i}.js'
+                  tmp.write_text(js)
+                  subprocess.run(['node','--check',str(tmp)],check=True)
+          print('JS syntax and DOM IDs OK')
+          PY
+
       - name: Commit integrated rank experience
         run: |
           git config user.name "Goldstein UI Bot"
