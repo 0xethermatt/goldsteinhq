@@ -1,0 +1,52 @@
+name: Run corrected My Seat dashboard patch
+
+on:
+  push:
+    paths:
+      - '.github/workflows/my-seat-dashboard-v2-apply.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Apply corrected patch
+        run: |
+          python3 - <<'PATCH'
+          from pathlib import Path
+          import textwrap
+          wf=Path('.github/workflows/my-seat-dashboard-v2.yml').read_text()
+          code=wf.split("python3 - <<'PY'\n",1)[1].split("\n          PY",1)[0]
+          exec(textwrap.dedent(code))
+          p=Path('my-seat.html')
+          p.write_text(p.read_text().replace('\\n','\n'))
+          PATCH
+      - name: Validate implementation
+        run: |
+          grep -q 'id="rankToggle"' my-seat.html
+          grep -q 'id="rankPreviewPanel" hidden' my-seat.html
+          grep -q 'class="seatMetricGrid"' my-seat.html
+          grep -q 'Gold salary' my-seat.html
+          grep -q 'Fee share' my-seat.html
+          grep -q 'Power rank' my-seat.html
+          grep -q 'Mint capacity' my-seat.html
+          ! grep -q 'setTimeout(playRanks' my-seat.html
+          ! grep -q 'id="replayRank"' my-seat.html
+          node - <<'NODE'
+          const fs=require('fs'),vm=require('vm');
+          const s=fs.readFileSync('my-seat.html','utf8');
+          for(const m of s.matchAll(/<script>([\s\S]*?)<\/script>/g)) new vm.Script(m[1]);
+          console.log('JS syntax OK');
+          NODE
+      - name: Commit
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add my-seat.html
+          git commit -m "Simplify My Seat dashboard and rank preview" || exit 0
+          git push
