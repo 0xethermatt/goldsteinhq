@@ -14,27 +14,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Apply rank integration
+      - name: Apply core rank integration
         run: python3 scripts/integrate_seat_ranks.py
+
+      - name: Polish claim handoff and artwork framing
+        run: python3 scripts/polish_rank_integration.py
 
       - name: Validate integration
         run: |
           grep -q '/assets/rank-sprite.css' my-seat.html
           grep -q 'Rabbi Schlomo Goldstein' my-seat.html
           grep -q 'rankMilestones' my-seat.html
+          grep -q 'goldsteinSeatStakeV2' my-seat.html
+          grep -q 'id="rankArt"' my-seat.html
           grep -q '/assets/rank-sprite.css' index.html
           grep -q 'Rabbi Schlomo Goldstein' index.html
           grep -q 'playMintRanks' index.html
           grep -q 'SEAT #0018' index.html
+          grep -q 'goldsteinSeatStakeV2' index.html
           grep -q 'id="secureBtn"' index.html
           grep -q 'id="seatNumber"' index.html
           grep -q 'id="characterName"' index.html
           grep -q 'id="desk"' index.html
+          grep -q '/assets/rank-sprite.css' welcome.html
+          grep -q 'id="nftRankArt"' welcome.html
+          grep -q 'drawRankArtwork' welcome.html
+          grep -q 'background-size:693.529% 314.118%' assets/rank-sprite.css
 
       - name: Commit integrated rank experience
         run: |
           git config user.name "Goldstein UI Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add index.html my-seat.html
-          git commit -m "Integrate Seat rank progression across Mint and My Seat" || exit 0
+          git add index.html my-seat.html welcome.html assets/rank-sprite.css
+          git commit -m "Polish Seat rank progression and claim handoff" || exit 0
           git push
