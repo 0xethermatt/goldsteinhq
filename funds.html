@@ -34,6 +34,19 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 .managerPfp{overflow:hidden;background:#0b0b08!important}
 .managerPfp img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
 
+
+
+/* G-Funds visual balance v3 */
+.shell{width:min(1240px,calc(100% - 64px));padding-top:36px}
+.pageTop{margin-bottom:22px}.eyebrow{font-size:12px}.pageTop h1{font-size:54px}.pageTop p{font-size:16px;color:#a49b86}.wallet{height:48px;padding:0 16px;font-size:13px}
+.marketLine{gap:10px;margin-bottom:30px}.marketPill{padding:8px 12px;font-size:11px}
+.positionBox{padding:21px 22px}.positionHead b{font-size:15px}.positionHead span{font-size:10px}.empty{font-size:14px}
+.lpPanelHead{padding:20px 22px}.lpPanelHead b{font-size:15px}.lpPanelHead span{font-size:10px}.lpRow{padding:16px 22px}.lpLabels{font-size:9px}.lpRow>strong,.lpPool strong{font-size:13px}.lpPool small{font-size:9px}
+.sectionHead{margin-bottom:17px}.sectionHead h2{font-size:40px}.sectionTag{font-size:11px}
+.fundsGrid{gap:16px}.fundMain{padding:26px}.fundHead{gap:16px}.managerPfp{width:58px;height:58px;border-radius:14px}.manager{gap:14px}.ticker{font-size:22px}.managerMeta small{font-size:10px}.detailsLink{font-size:12px}.fundCard h3{margin-top:24px;font-size:34px}.fundDesc{font-size:14px;line-height:1.55}.riskLine{margin-top:18px;font-size:10px}.riskDots i{width:23px;height:5px}.metrics{margin:21px 26px 0}.metric{padding:16px 14px}.metric small{font-size:9px}.metric strong{font-size:15px}.holdings{margin:19px 26px 0}.holdingsLabel{font-size:9px}.holding{padding:7px 9px;font-size:10px}.actions{padding:23px 26px 26px;gap:9px}.action{height:48px;font-size:12px}.coming{padding:22px 24px}.coming h3{font-size:23px}.coming p{font-size:13px}
+@media(max-width:1050px){.shell{width:min(1020px,calc(100% - 40px))}}
+@media(max-width:760px){.shell{width:calc(100% - 24px);padding-top:26px}.pageTop h1{font-size:43px}.pageTop p{font-size:14px}.sectionHead h2{font-size:34px}.fundMain{padding:21px}.managerPfp{width:52px;height:52px}.ticker{font-size:20px}.fundCard h3{font-size:30px}.fundDesc{font-size:13px}.metrics,.holdings{margin-left:21px;margin-right:21px}.actions{padding:20px 21px 22px}}
+
 </style>
 </head>
 <body>
@@ -42,7 +55,7 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 <nav class="mobileNav" id="mobileNav"><a href="/app" target="_top">Mint</a><a href="/app/my-seat" target="_top">My Seat</a><a class="active" href="/app/funds" target="_top">G-Funds</a></nav>
 <div class="prototype mono">Prototype only — simulated fund data. No real assets or transactions.</div>
 <main><div class="shell">
-<header class="pageTop"><div><div class="eyebrow mono">Fund desk</div><h1>G-Funds</h1><p>Seat-holder markets.</p></div><button class="wallet mono" id="walletBtn"><i></i>Connect wallet</button></header>
+<header class="pageTop"><div><div class="eyebrow mono">Fund desk</div><h1>G-Funds</h1><p>Goldstein fund markets.</p></div><button class="wallet mono" id="walletBtn"><i></i>Connect wallet</button></header>
 <div class="marketLine"><span class="marketPill mono"><b>2</b> house funds</span><span class="marketPill mono">Pairs settle in <b>GLD</b></span><span class="marketPill mono">Seat mint at <b>NAV</b></span></div>
 
 <section class="positions" aria-label="Your positions">
