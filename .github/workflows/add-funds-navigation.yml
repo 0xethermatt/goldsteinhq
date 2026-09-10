@@ -1,0 +1,65 @@
+name: Add G-Funds to shared navigation
+
+on:
+  push:
+    paths:
+      - '.github/workflows/add-funds-navigation.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  nav:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Add Funds destination to Mint and My Seat
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          # Mint page navigation
+          p=Path('index.html')
+          s=p.read_text()
+          old='<nav class="nav"><a class="active" href="/" target="_top"><span>Mint</span></a><a href="/my-seat" target="_top"><span>My Seat</span></a></nav>'
+          new='<nav class="nav"><a class="active" href="/" target="_top"><span>Mint</span></a><a href="/my-seat" target="_top"><span>My Seat</span></a><a href="/funds" target="_top"><span>G-Funds</span></a></nav>'
+          if old not in s: raise SystemExit('Mint desktop nav not found')
+          s=s.replace(old,new,1)
+          oldm='<nav class="mobileNav" id="mobileNav"><a class="active" href="/" target="_top">Mint</a><a href="/my-seat" target="_top">My Seat</a></nav>'
+          newm='<nav class="mobileNav" id="mobileNav"><a class="active" href="/" target="_top">Mint</a><a href="/my-seat" target="_top">My Seat</a><a href="/funds" target="_top">G-Funds</a></nav>'
+          if oldm not in s: raise SystemExit('Mint mobile nav not found')
+          s=s.replace(oldm,newm,1)
+          compact='''\n@media(max-width:1050px) and (min-width:761px){.nav a[href="/funds"]:after{content:"FUNDS"}}\n'''
+          s=s.replace('</style>',compact+'</style>',1)
+          p.write_text(s)
+
+          # My Seat navigation
+          p=Path('my-seat.html')
+          s=p.read_text()
+          old='''  <nav class="nav">\n    <a href="/" target="_top"><span>Mint</span></a>\n    <a class="active" href="/my-seat" target="_top"><span>My Seat</span></a>\n  </nav>'''
+          new='''  <nav class="nav">\n    <a href="/" target="_top"><span>Mint</span></a>\n    <a class="active" href="/my-seat" target="_top"><span>My Seat</span></a>\n    <a href="/funds" target="_top"><span>G-Funds</span></a>\n  </nav>'''
+          if old not in s: raise SystemExit('My Seat desktop nav not found')
+          s=s.replace(old,new,1)
+          oldm='<nav class="mobileNav" id="mobileNav"><a href="/" target="_top">Mint</a><a class="active" href="/my-seat" target="_top">My Seat</a></nav>'
+          newm='<nav class="mobileNav" id="mobileNav"><a href="/" target="_top">Mint</a><a class="active" href="/my-seat" target="_top">My Seat</a><a href="/funds" target="_top">G-Funds</a></nav>'
+          if oldm not in s: raise SystemExit('My Seat mobile nav not found')
+          s=s.replace(oldm,newm,1)
+          compact='''\n@media(max-width:1050px) and (min-width:761px){.nav a[href="/funds"]:after{content:"FUNDS"}}\n'''
+          s=s.replace('</style>',compact+'</style>',1)
+          p.write_text(s)
+          PY
+      - name: Validate shared nav
+        run: |
+          grep -q 'href="/funds" target="_top"><span>G-Funds</span>' index.html
+          grep -q 'href="/funds" target="_top"><span>G-Funds</span>' my-seat.html
+          grep -q 'href="/funds" target="_top">G-Funds</a>' index.html
+          grep -q 'href="/funds" target="_top">G-Funds</a>' my-seat.html
+      - name: Commit shared navigation
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html my-seat.html
+          git commit -m "Add G-Funds to shared navigation" || exit 0
+          git push
