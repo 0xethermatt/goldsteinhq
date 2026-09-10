@@ -22,26 +22,27 @@ jobs:
           from pathlib import Path
           p=Path('my-seat.html')
           s=p.read_text()
-          css='''
-/* My Seat spacing polish v3 */
-#stake{margin-top:42px}
-.fund{display:flex;flex-direction:column;min-height:240px}
-.fund p{margin-bottom:20px}
-.fundBottom{
-  position:static!important;
-  left:auto!important;
-  right:auto!important;
-  bottom:auto!important;
-  margin-top:auto;
-  padding-top:16px;
-  border-top:1px solid #25271b;
-}
-@media(max-width:760px){
-  #stake{margin-top:34px}
-  .fund{min-height:220px}
-  .fundBottom{padding-top:14px}
-}
-'''
+          css="""
+          /* My Seat spacing polish v3 */
+          #stake{margin-top:42px}
+          .fund{display:flex;flex-direction:column;min-height:240px}
+          .fund p{margin-bottom:20px}
+          .fundBottom{
+            position:static!important;
+            left:auto!important;
+            right:auto!important;
+            bottom:auto!important;
+            margin-top:auto;
+            padding-top:16px;
+            border-top:1px solid #25271b;
+          }
+          @media(max-width:760px){
+            #stake{margin-top:34px}
+            .fund{min-height:220px}
+            .fundBottom{padding-top:14px}
+          }
+          """
+          css='\n'.join(line[10:] if line.startswith('          ') else line for line in css.splitlines())
           if '/* My Seat spacing polish v3 */' not in s:
               s=s.replace('</style>',css+'\n</style>',1)
           p.write_text(s)
