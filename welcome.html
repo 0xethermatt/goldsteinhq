@@ -100,7 +100,7 @@ function shareUrl(){return location.origin+'/' }
 function wireFrame(){const doc=frame.contentDocument;if(!doc)return;const secured=doc.getElementById('secured');if(secured)secured.style.display='none';const btn=doc.getElementById('secureBtn');if(btn){btn.onclick=e=>{e.preventDefault();openModal(doc)}}}
 frame.addEventListener('load',()=>{wireFrame();setTimeout(wireFrame,250)});
 $('closeBtn').onclick=closeModal;
-$('enterBtn').onclick=()=>{const doc=frame.contentDocument;closeModal();doc?.getElementById('firm')?.scrollIntoView({behavior:'smooth',block:'start'})};
+$('enterBtn').onclick=()=>{closeModal();window.location.href='/my-seat'};
 $('shareXBtn').onclick=()=>{const u='https://twitter.com/intent/tweet?text='+encodeURIComponent(postText())+'&url='+encodeURIComponent(shareUrl());window.open(u,'_blank','noopener,noreferrer')};
 $('telegramBtn').onclick=()=>{const u='https://t.me/share/url?url='+encodeURIComponent(shareUrl())+'&text='+encodeURIComponent(postText());window.open(u,'_blank','noopener,noreferrer')};
 $('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(postText()+'\n'+shareUrl());toast('Post copied.')}catch{toast('Copy failed — use your browser copy controls.')}};
