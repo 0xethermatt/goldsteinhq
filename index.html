@@ -26,10 +26,19 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 .brandViewport{width:176px;height:58px;display:grid;place-items:center;overflow:hidden;position:relative}
 .brandLogo{display:block;width:176px;max-width:100%;height:auto;max-height:58px;object-fit:contain;filter:drop-shadow(0 5px 15px rgba(216,180,63,.12))}
 @media(max-width:1050px) and (min-width:761px){.brand{padding:0}.brandViewport{width:36px;height:52px}.brandLogo{position:absolute;width:250px;max-width:none;height:auto;max-height:none;left:-10px;top:50%;transform:translateY(-50%)}}
+
+/* Goldstein HQ sidebar wordmark */
+.brand{height:72px;justify-content:flex-start;gap:0;padding:0 18px;overflow:visible}
+.brandText{display:block;color:#f4f1e8;font-size:18px;font-weight:850;letter-spacing:-.025em;line-height:1;white-space:nowrap}
+@media(max-width:1050px) and (min-width:761px){
+  .brand{height:72px;justify-content:center;padding:0}
+  .brandText{font-size:0}
+  .brandText:after{content:"HQ";font-size:16px;font-weight:900;letter-spacing:.02em;color:#f0df9d}
+}
 </style>
 </head>
 <body>
-<aside class="sidebar"><div class="brand"><div class="brandViewport"><img class="brandLogo" src="/goldstein-logo-2.png.png" alt="Goldstein Group"></div></div><nav class="nav"><a class="active" href="#draw"><span>Reveal</span></a><a href="#firm"><span>The Floor</span></a><a href="#learn"><span>FAQ</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>
+<aside class="sidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a class="active" href="#draw"><span>Reveal</span></a><a href="#firm"><span>The Floor</span></a><a href="#learn"><span>FAQ</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>
 <div class="prototype mono">Prototype only — simulated wallet, reveal, rerolls and claim. No real assets or transactions.</div>
 <main><div class="shell">
 <section class="hero" aria-label="Goldstein Group — Take a Seat at the Firm"></section>
