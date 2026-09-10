@@ -1,0 +1,47 @@
+name: Sync G-Fund product copy
+
+on:
+  push:
+    paths:
+      - '.github/workflows/sync-gfund-copy.yml'
+      - 'scripts/sync_gfund_product_copy.py'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync current product model
+        run: python3 scripts/sync_gfund_product_copy.py
+      - name: Validate G-Fund consistency
+        run: |
+          grep -q '>MU<' funds.html
+          grep -q '>SPCX<' funds.html
+          grep -q '>BONER<' funds.html
+          grep -q '>OPTIMUS<' funds.html
+          grep -q "chips:\['NVDA','TSLA','MU','GOOGL','SPCX'\]" fund-detail.html
+          grep -q "chips:\['AI','BONER','MOO','OPTIMUS','MEME'\]" fund-detail.html
+          ! grep -q '>AAPL<' funds.html
+          ! grep -q "chips:\['AAPL'" fund-detail.html
+      - name: JavaScript sanity check
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+          for filename in ['funds.html','fund-detail.html']:
+              html=Path(filename).read_text()
+              for i,js in enumerate(re.findall(r'<script[^>]*>(.*?)</script>',html,re.S)):
+                  tmp=Path('/tmp')/f'{filename}-{i}.js';tmp.write_text(js)
+                  subprocess.run(['node','--check',str(tmp)],check=True)
+          print('G-Fund JS clean')
+          PY
+      - name: Commit product sync
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add funds.html fund-detail.html
+          git commit -m "Align G-Fund pages with current product model" || exit 0
+          git push
