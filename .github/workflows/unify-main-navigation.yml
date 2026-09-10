@@ -1,0 +1,95 @@
+name: Unify Goldstein navigation
+
+on:
+  push:
+    paths:
+      - '.github/workflows/unify-main-navigation.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  unify-nav:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Apply unified navigation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          # ----- Mint page -----
+          p = Path('index.html')
+          s = p.read_text()
+
+          old_sidebar = '<aside class="sidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a class="active" href="/" target="_top"><span>Mint</span></a><a href="/my-seat" target="_top"><span>My Seat</span></a><a href="#firm"><span>The Floor</span></a><a href="#learn"><span>FAQ</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>'
+          new_sidebar = '<aside class="sidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a class="active" href="/" target="_top"><span>Mint</span></a><a href="/my-seat" target="_top"><span>My Seat</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>'
+          if old_sidebar not in s:
+              raise SystemExit('Mint desktop nav anchor not found')
+          s = s.replace(old_sidebar, new_sidebar, 1)
+
+          old_switch = '<nav class="pageSwitch mobilePageSwitch" aria-label="Goldstein pages"><a class="active" href="/" target="_top">Mint</a><a href="/my-seat" target="_top">My Seat</a></nav>'
+          new_mobile = '<div class="mobileBar"><div class="mobileBrand">Goldstein HQ</div><button class="mobileMenu" id="mobileMenu">Menu</button></div>\n<nav class="mobileNav" id="mobileNav"><a class="active" href="/" target="_top">Mint</a><a href="/my-seat" target="_top">My Seat</a></nav>'
+          if old_switch not in s:
+              raise SystemExit('Mint mobile switch anchor not found')
+          s = s.replace(old_switch, new_mobile, 1)
+
+          # Remove old always-visible mobile switch CSS.
+          start = s.find('/* Primary page switcher: Mint ↔ My Seat */')
+          if start != -1:
+              end = s.find('</style>', start)
+              if end == -1:
+                  raise SystemExit('Mint style end not found')
+              s = s[:start] + s[end:]
+
+          # Add the same mobile menu pattern used on My Seat.
+          nav_css = '''\n/* Unified Goldstein primary navigation */\n.mobileBar{display:none}\n@media(max-width:1050px) and (min-width:761px){\n  .nav a[href="/"]:after{content:"MINT"}\n  .nav a[href="/my-seat"]:after{content:"SEAT"}\n}\n@media(max-width:760px){\n  .prototype{position:static;min-height:32px;font-size:9px;padding-inline:10px}\n  .mobileBar{display:flex;position:sticky;top:0;z-index:97;height:62px;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line);background:rgba(10,10,7,.96);backdrop-filter:blur(12px)}\n  .mobileBrand{font-size:17px;font-weight:850;letter-spacing:-.02em}\n  .mobileMenu{height:38px;padding:0 11px;border:1px solid #3c3420;border-radius:9px;background:#15130c;color:#d7cdb4;font-size:11px;font-weight:850}\n  .mobileNav{display:none;position:fixed;z-index:96;top:62px;left:0;right:0;padding:9px 12px 13px;border-bottom:1px solid var(--line);background:#0b0b08;box-shadow:0 18px 40px rgba(0,0,0,.28)}\n  .mobileNav.show{display:grid;gap:6px}\n  .mobileNav a{padding:12px;border:1px solid #272318;border-radius:9px;color:#cfc5ac;text-decoration:none;font-size:13px;font-weight:800}\n  .mobileNav a.active{color:#f0d15e;border-color:#4d401f;background:#151209}\n  main{margin-left:0;padding-top:0}\n}\n'''
+          s = s.replace('</style>', nav_css + '</style>', 1)
+
+          # Wire mobile menu without touching existing mint behavior.
+          marker = "const $=id=>document.getElementById(id);let connected=false,revealed=false,rerolls=0,assigned=353,remaining=1147,currentIndex=0;"
+          replacement = marker + "\n$('mobileMenu').onclick=()=>$('mobileNav').classList.toggle('show');document.querySelectorAll('#mobileNav a').forEach(a=>a.onclick=()=>$('mobileNav').classList.remove('show'));"
+          if marker not in s:
+              raise SystemExit('Mint JS anchor not found')
+          s = s.replace(marker, replacement, 1)
+          p.write_text(s)
+
+          # ----- My Seat page -----
+          p = Path('my-seat.html')
+          s = p.read_text()
+
+          old_nav = '''  <nav class="nav">\n    <a href="/"><span>Mint</span></a>\n    <a class="active" href="/my-seat"><span>My Seat</span></a>\n    <a href="#stake"><span>Stake</span></a>\n    <a href="#funds"><span>G-Funds</span></a>\n  </nav>'''
+          new_nav = '''  <nav class="nav">\n    <a href="/" target="_top"><span>Mint</span></a>\n    <a class="active" href="/my-seat" target="_top"><span>My Seat</span></a>\n  </nav>'''
+          if old_nav not in s:
+              raise SystemExit('My Seat desktop nav anchor not found')
+          s = s.replace(old_nav, new_nav, 1)
+
+          old_mobile = '<nav class="mobileNav" id="mobileNav"><a href="/">Mint</a><a class="active" href="/my-seat">My Seat</a><a href="#stake">Stake</a><a href="#funds">G-Funds</a></nav>'
+          new_mobile = '<nav class="mobileNav" id="mobileNav"><a href="/" target="_top">Mint</a><a class="active" href="/my-seat" target="_top">My Seat</a></nav>'
+          if old_mobile not in s:
+              raise SystemExit('My Seat mobile nav anchor not found')
+          s = s.replace(old_mobile, new_mobile, 1)
+          p.write_text(s)
+          PY
+
+      - name: Validate unified navigation
+        run: |
+          test "$(grep -o '<span>Stake</span>' index.html | wc -l)" -eq 0
+          test "$(grep -o '<span>G-Funds</span>' index.html | wc -l)" -eq 0
+          test "$(grep -o '<span>Stake</span>' my-seat.html | wc -l)" -eq 0
+          test "$(grep -o '<span>G-Funds</span>' my-seat.html | wc -l)" -eq 0
+          grep -q 'id="mobileMenu"' index.html
+          grep -q 'id="mobileMenu"' my-seat.html
+          grep -q 'href="/my-seat" target="_top">My Seat' index.html
+          grep -q 'href="/" target="_top">Mint' my-seat.html
+
+      - name: Commit unified navigation
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html my-seat.html
+          git commit -m "Unify Mint and My Seat navigation" || exit 0
+          git push
