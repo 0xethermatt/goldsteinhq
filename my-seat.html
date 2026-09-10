@@ -17,20 +17,26 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 @media(max-width:1050px){:root{--side:88px}.brand{justify-content:center;padding:0}.brandText{font-size:0}.brandText:after{content:"HQ";font-size:16px;font-weight:900;letter-spacing:.02em;color:#f0df9d}.nav a{text-align:center;padding-inline:8px}.nav a span{display:none}.nav a:after{font:850 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em}.nav a[href="#overview"]:after{content:"SEAT"}.nav a[href="#stake"]:after{content:"STAKE"}.nav a[href="#funds"]:after{content:"FUNDS"}.sideMeta{display:none}.shell{width:min(980px,calc(100% - 36px))}.seatCard{grid-template-columns:310px 1fr}.seatCard:after{left:310px}.seatVisual{min-height:360px}.portrait{width:220px;height:270px}.seatInfo{padding:32px}.fundGrid{grid-template-columns:1fr 1fr}.positionGrid{grid-template-columns:1fr}}
 @media(max-width:760px){:root{--side:0px}.sidebar{display:none}.prototype{position:static;min-height:32px;font-size:9px;padding-inline:10px}.mobileBar{display:flex;position:sticky;top:0;z-index:70;height:62px;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line);background:rgba(10,10,7,.96);backdrop-filter:blur(12px)}.mobileBrand{font-size:17px;font-weight:850;letter-spacing:-.02em}.mobileMenu{height:38px;padding:0 11px;border:1px solid #3c3420;border-radius:9px;background:#15130c;color:#d7cdb4;font-size:11px;font-weight:850}.mobileNav{display:none;position:fixed;z-index:69;top:62px;left:0;right:0;padding:9px 12px 13px;border-bottom:1px solid var(--line);background:#0b0b08;box-shadow:0 18px 40px rgba(0,0,0,.28)}.mobileNav.show{display:grid;gap:6px}.mobileNav a{padding:12px;border:1px solid #272318;border-radius:9px;color:#cfc5ac;text-decoration:none;font-size:13px;font-weight:800}.mobileNav a.active{color:#f0d15e;border-color:#4d401f;background:#151209}main{margin-left:0;padding-top:0}.shell{width:calc(100% - 24px);padding:24px 0 64px}.pageTop{align-items:flex-start}.pageTop h1{font-size:39px}.pageTop p{font-size:13px}.wallet{height:40px;padding-inline:11px}.seatCard{grid-template-columns:1fr}.seatCard:after{display:none}.seatVisual{min-height:320px;border-right:0;border-bottom:1px solid var(--line)}.portrait{width:210px;height:252px}.seatInfo{padding:27px 22px}.seatInfo h2{font-size:38px}.stats{margin-bottom:34px}.fundGrid{grid-template-columns:1fr}.stakeForm{grid-template-columns:1fr 1fr}.stakeForm input{grid-column:1/-1}}
 @media(max-width:500px){.pageTop{display:grid}.pageTop .wallet{justify-self:start}.seatInfo h2{font-size:34px}.seatActions{display:grid}.seatActions .btn{width:100%}.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}.statValue{font-size:24px}.stakeTop{display:grid}.stakeAmount{text-align:left}.fund{min-height:200px}.sectionHead{display:grid}}
+
+@media(max-width:1050px) and (min-width:761px){
+  .nav a[href="/"]:after{content:"MINT"}
+  .nav a[href="/my-seat"]:after{content:"SEAT"}
+}
 </style>
 </head>
 <body>
 <aside class="sidebar">
   <div class="brand"><span class="brandText">Goldstein HQ</span></div>
   <nav class="nav">
-    <a class="active" href="#overview"><span>My Seat</span></a>
+    <a href="/"><span>Mint</span></a>
+    <a class="active" href="/my-seat"><span>My Seat</span></a>
     <a href="#stake"><span>Stake</span></a>
     <a href="#funds"><span>G-Funds</span></a>
   </nav>
   <div class="sideMeta mono">Seat dashboard · prototype</div>
 </aside>
 <div class="mobileBar"><div class="mobileBrand">Goldstein HQ</div><button class="mobileMenu" id="mobileMenu">Menu</button></div>
-<nav class="mobileNav" id="mobileNav"><a class="active" href="#overview">My Seat</a><a href="#stake">Stake</a><a href="#funds">G-Funds</a></nav>
+<nav class="mobileNav" id="mobileNav"><a href="/">Mint</a><a class="active" href="/my-seat">My Seat</a><a href="#stake">Stake</a><a href="#funds">G-Funds</a></nav>
 <div class="prototype mono">Prototype only — simulated Seat, staking and fund data. No real assets or transactions.</div>
 <main><div class="shell">
   <header class="pageTop" id="overview">

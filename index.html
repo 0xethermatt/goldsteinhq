@@ -35,10 +35,20 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
   .brandText{font-size:0}
   .brandText:after{content:"HQ";font-size:16px;font-weight:900;letter-spacing:.02em;color:#f0df9d}
 }
+
+/* Primary page switcher: Mint ↔ My Seat */
+.pageSwitch{display:none}
+@media(max-width:760px){
+  .mobilePageSwitch{position:fixed;z-index:96;top:34px;left:0;right:0;height:54px;padding:8px 12px;display:grid;grid-template-columns:1fr 1fr;gap:7px;border-bottom:1px solid var(--line);background:rgba(10,10,7,.97);backdrop-filter:blur(12px)}
+  .mobilePageSwitch a{display:flex;align-items:center;justify-content:center;border:1px solid #2c281b;border-radius:9px;background:#0d0d09;color:#928a76;text-decoration:none;font-size:12px;font-weight:850}
+  .mobilePageSwitch a.active{border-color:#4e411e;background:#171309;color:#f0d15e}
+  main{padding-top:88px}
+}
 </style>
 </head>
 <body>
-<aside class="sidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a class="active" href="#draw"><span>Reveal</span></a><a href="#firm"><span>The Floor</span></a><a href="#learn"><span>FAQ</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>
+<aside class="sidebar"><div class="brand"><span class="brandText">Goldstein HQ</span></div><nav class="nav"><a class="active" href="/" target="_top"><span>Mint</span></a><a href="/my-seat" target="_top"><span>My Seat</span></a><a href="#firm"><span>The Floor</span></a><a href="#learn"><span>FAQ</span></a></nav><div class="sideMeta mono">Prototype v5</div></aside>
+<nav class="pageSwitch mobilePageSwitch" aria-label="Goldstein pages"><a class="active" href="/" target="_top">Mint</a><a href="/my-seat" target="_top">My Seat</a></nav>
 <div class="prototype mono">Prototype only — simulated wallet, reveal, rerolls and claim. No real assets or transactions.</div>
 <main><div class="shell">
 <section class="hero" aria-label="Goldstein Group — Take a Seat at the Firm"></section>
