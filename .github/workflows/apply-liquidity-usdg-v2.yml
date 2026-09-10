@@ -1,0 +1,36 @@
+name: Apply liquidity UX v2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-liquidity-usdg-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Apply patch
+        run: python3 .github/scripts/apply_liquidity_usdg_v2.py
+      - name: Validate
+        run: |
+          grep -q 'Goldstein liquidity / primary-market modal v6' funds.html
+          grep -q 'data-lp-mode="withdraw"' funds.html
+          grep -q 'Seat mint at <b>NAV with USDG</b>' funds.html
+          grep -q 'Pay USDG and receive fund tokens at net asset value' funds.html
+          grep -q 'LP quote</small><strong>GLD' fund-detail.html
+          grep -q 'Primary minting with USDG at NAV.' my-seat.html
+          grep -q 'mint G-Funds at NAV using USDG' landing.html
+          node -e "const fs=require('fs'),vm=require('vm');for(const f of ['funds.html','fund-detail.html','my-seat.html','landing.html']){const s=fs.readFileSync(f,'utf8');for(const m of s.matchAll(/<script>([\\s\\S]*?)<\\/script>/g))new vm.Script(m[1]);}console.log('JS syntax OK')"
+      - name: Commit
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add funds.html fund-detail.html my-seat.html landing.html
+          git commit -m "Upgrade LP modal and use USDG for NAV minting" || exit 0
+          git push
