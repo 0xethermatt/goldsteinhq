@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" href="/assets/rank-sprite.css" />
 <title>Goldstein Group</title>
 <style>
 :root{--bg:#080806;--panel:#11100b;--panel2:#0d0c09;--line:#342d1b;--gold:#e0b936;--gold2:#f2cf4b;--text:#f4f1e8;--muted:#a79d88;--soft:#766e5e;--green:#8fe3aa}
@@ -29,6 +30,13 @@ button{font:inherit}#appFrame{position:fixed;inset:0;width:100%;height:100%;bord
 .brandLock img{width:220px;height:auto;max-height:74px;object-fit:contain;filter:drop-shadow(0 5px 18px rgba(0,0,0,.34))}
 .nftPlaceholder img{width:170px;height:auto;max-height:72px;margin:0 auto 18px;object-fit:contain;opacity:1}
 @media(max-width:520px){.brandLock{left:20px;top:18px}.brandLock img{width:168px;height:auto;max-height:58px}.nftPlaceholder img{width:145px;height:auto;max-height:62px}}
+
+/* Claimed Seat artwork handoff */
+.nftRankArt{position:absolute;inset:0;display:none;border-radius:15px}
+.nftInner.hasRank .nftRankArt{display:block}
+.nftInner.hasRank #nftImage,.nftInner.hasRank .nftPlaceholder{display:none!important}
+.nftFrame.hasRankFrame{aspect-ratio:1/1}
+
 </style>
 </head>
 <body>
@@ -40,9 +48,10 @@ button{font:inherit}#appFrame{position:fixed;inset:0;width:100%;height:100%;bord
       <div class="brandLock"><img src="/goldstein-logo-2.png.png" alt="Goldstein Group"></div>
       <div class="cardGrid">
         <div class="nftWrap">
-          <div class="nftFrame">
+          <div class="nftFrame" id="nftFrame">
             <div class="nftInner" id="nftInner">
               <img id="nftImage" alt="Minted Goldstein NFT">
+              <div id="nftRankArt" class="rankArtwork rank-intern nftRankArt" role="img" aria-label="Rabbi Schlomo Goldstein Intern rank"></div>
               <div class="nftPlaceholder" id="nftPlaceholder">
                 <img src="/goldstein-logo-2.png.png" alt="Goldstein Group">
                 <small>Minted NFT</small>
@@ -81,18 +90,19 @@ button{font:inherit}#appFrame{position:fixed;inset:0;width:100%;height:100%;bord
 <div class="toast" id="toast"></div>
 <script>
 const frame=document.getElementById('appFrame'),modal=document.getElementById('welcomeModal');
-const $=id=>document.getElementById(id);let state={seat:'SEAT #0354',identity:'Goldstein Member',nftUrl:null};
+const $=id=>document.getElementById(id);let state={seat:'SEAT #0354',identity:'Goldstein Member',nftUrl:null,rankKey:null};
 const toast=t=>{$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('toast').classList.remove('show'),1700)};
 function closeModal(){modal.classList.remove('show');modal.setAttribute('aria-hidden','true')}
 function normalizeSeat(seat){return seat.replace(/^SEAT\s*/i,'').trim()}
 function findNftUrl(doc){const nodes=['#nftImage','[data-nft-image]','.seatArt img','.seatVisual img','.stage img'].map(s=>doc.querySelector(s)).filter(Boolean);for(const n of nodes){const src=n.currentSrc||n.src||n.getAttribute('src');if(src)return src}return null}
-function setNft(url){state.nftUrl=url||null;const inner=$('nftInner'),img=$('nftImage');if(url){img.src=url;inner.classList.add('hasImage')}else{img.removeAttribute('src');inner.classList.remove('hasImage')}}
+function setNft(url,rankKey){state.nftUrl=url||null;state.rankKey=rankKey||null;const inner=$('nftInner'),img=$('nftImage'),frameEl=$('nftFrame'),rankArt=$('nftRankArt');inner.classList.remove('hasImage','hasRank');frameEl.classList.remove('hasRankFrame');if(rankKey){rankArt.className=`rankArtwork rank-${rankKey} nftRankArt`;inner.classList.add('hasRank');frameEl.classList.add('hasRankFrame');img.removeAttribute('src')}else if(url){img.src=url;inner.classList.add('hasImage')}else{img.removeAttribute('src')}}
 function openModal(doc){
   state.seat=(doc.getElementById('seatNumber')?.textContent||'SEAT #0354').trim();
   state.identity=(doc.getElementById('characterName')?.textContent||'Goldstein Member').trim();
   state.nftUrl=findNftUrl(doc);
+  state.rankKey=state.identity==='Rabbi Schlomo Goldstein'?'intern':null;
   const short=normalizeSeat(state.seat);
-  $('seatInline').textContent=short;$('nftSeat').textContent='Seat '+short;$('identityName').textContent=state.identity;$('identityInline').textContent=state.identity;$('nftIdentity').textContent=state.identity;setNft(state.nftUrl);
+  $('seatInline').textContent=short;$('nftSeat').textContent='Seat '+short;$('identityName').textContent=state.identity;$('identityInline').textContent=state.identity;$('nftIdentity').textContent=state.identity;setNft(state.nftUrl,state.rankKey);
   modal.classList.add('show');modal.setAttribute('aria-hidden','false');
 }
 function postText(){return `I just secured ${state.seat} — ${state.identity} at Goldstein Group.\n\nWelcome to the firm.`}
@@ -107,6 +117,10 @@ $('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(postText(
 function loadImage(src){return new Promise((resolve,reject)=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>resolve(i);i.onerror=reject;i.src=src})}
 function cover(ctx,img,x,y,w,h){const s=Math.max(w/img.width,h/img.height),sw=w/s,sh=h/s,sx=(img.width-sw)/2,sy=(img.height-sh)/2;ctx.drawImage(img,sx,sy,sw,sh,x,y,w,h)}
 function rounded(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
+async function drawRankArtwork(ctx,x,y,w,h,key){
+  const el=$('nftRankArt'),bg=getComputedStyle(el).backgroundImage,m=bg.match(/url\([\"']?(data:image\/[^\"')]+)[\"']?\)/);if(!m)throw new Error('Rank art unavailable');
+  const sprite=await loadImage(m[1]);const xs={intern:65,analyst:245,associate:420,vp:594,md:772,partner:946};const sx=xs[key]??65,sy=30,sw=170,sh=170;ctx.drawImage(sprite,sx,sy,sw,sh,x,y,w,h);
+}
 async function renderShareCard(){
   const c=document.createElement('canvas');c.width=1600;c.height=900;const ctx=c.getContext('2d');
   const hero=await loadImage('/assets/goldstein-hero.webp');cover(ctx,hero,0,0,1600,900);
@@ -114,7 +128,7 @@ async function renderShareCard(){
   ctx.strokeStyle='rgba(224,185,54,.5)';ctx.lineWidth=2;rounded(ctx,34,34,1532,832,24);ctx.stroke();
   try{const logo=await loadImage('/goldstein-logo-2.png.png');ctx.drawImage(logo,72,54,330,110)}catch{}
   const nx=90,ny=210,nw=430,nh=540;ctx.fillStyle='rgba(14,13,9,.9)';rounded(ctx,nx,ny,nw,nh,26);ctx.fill();ctx.strokeStyle='rgba(235,194,61,.62)';ctx.lineWidth=3;ctx.stroke();
-  if(state.nftUrl){try{const nft=await loadImage(state.nftUrl);ctx.save();rounded(ctx,nx+12,ny+12,nw-24,nh-24,18);ctx.clip();cover(ctx,nft,nx+12,ny+12,nw-24,nh-24);ctx.restore()}catch{drawPlaceholder(ctx,nx,ny,nw,nh)}}else{drawPlaceholder(ctx,nx,ny,nw,nh)}
+  if(state.rankKey){try{const size=nw-24,yy=ny+(nh-size)/2;ctx.save();rounded(ctx,nx+12,yy,size,size,18);ctx.clip();await drawRankArtwork(ctx,nx+12,yy,size,size,state.rankKey);ctx.restore()}catch{drawPlaceholder(ctx,nx,ny,nw,nh)}}else if(state.nftUrl){try{const nft=await loadImage(state.nftUrl);ctx.save();rounded(ctx,nx+12,ny+12,nw-24,nh-24,18);ctx.clip();cover(ctx,nft,nx+12,ny+12,nw-24,nh-24);ctx.restore()}catch{drawPlaceholder(ctx,nx,ny,nw,nh)}}else{drawPlaceholder(ctx,nx,ny,nw,nh)}
   ctx.fillStyle='rgba(8,8,5,.88)';rounded(ctx,nx+24,ny+nh-72,nw-48,48,10);ctx.fill();ctx.fillStyle='#efca47';ctx.font='800 18px monospace';ctx.fillText('SEAT '+normalizeSeat(state.seat),nx+42,ny+nh-41);ctx.fillStyle='#d4c9ab';ctx.textAlign='right';ctx.fillText('SECURED',nx+nw-42,ny+nh-41);ctx.textAlign='left';
   ctx.fillStyle='#efca47';ctx.font='800 20px monospace';ctx.fillText('SEAT SECURED · NEW FIRM MEMBER',610,265);
   ctx.fillStyle='#f4f1e8';ctx.font='500 80px Georgia';ctx.fillText('Welcome to',610,365);ctx.fillStyle='#efc944';ctx.font='500 88px Georgia';ctx.fillText('Goldstein Group.',610,455);

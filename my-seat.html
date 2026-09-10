@@ -33,11 +33,11 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
 .rankThumb{min-width:0;border:1px solid #282419;border-radius:9px;background:#0e0e0a;color:#8d8572;padding:6px;transition:.18s;text-align:left}
 .rankThumb:hover{border-color:#4b4022;transform:translateY(-1px)}
 .rankThumb.active{border-color:#82691f;background:#171309;color:#efd05a;box-shadow:inset 0 0 0 1px rgba(216,180,63,.11)}
-.rankThumb .rankArtwork{display:block;width:100%;aspect-ratio:171/145;border-radius:6px;border:1px solid rgba(255,255,255,.04)}
+.rankThumb .rankArtwork{display:block;width:100%;aspect-ratio:1/1;border-radius:6px;border:1px solid rgba(255,255,255,.04)}
 .rankThumb b{display:block;margin-top:6px;font:850 8px/1.15 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rankSeatCard .seatVisual{min-height:350px;padding:24px 22px;display:flex;flex-direction:column;gap:11px;align-items:center;justify-content:center}
 .rankArtFrame{position:relative;width:min(300px,100%);filter:drop-shadow(0 22px 44px rgba(0,0,0,.32))}
-.rankSeatArt{width:100%;aspect-ratio:171/145;border:1px solid #6b5620;border-radius:18px;box-shadow:inset 0 0 0 6px #090906;transition:opacity .22s ease,transform .22s ease,filter .22s ease}
+.rankSeatArt{width:100%;aspect-ratio:1/1;border:1px solid #6b5620;border-radius:18px;box-shadow:inset 0 0 0 6px #090906;transition:opacity .22s ease,transform .22s ease,filter .22s ease}
 .rankSeatArt.changing{opacity:.38;transform:scale(.985);filter:blur(1px)}
 .rankOverlay{position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;border:1px solid rgba(229,192,65,.38);border-radius:9px;background:rgba(7,7,5,.82);backdrop-filter:blur(8px)}
 .rankOverlay span{color:#988d70;font:800 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase}.rankOverlay strong{color:#f0cf58;font:850 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase}
@@ -80,8 +80,8 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
     </div>
     <div class="seatVisual">
       <div class="rankArtFrame">
-        <div class="rankArtwork rank-associate rankSeatArt" id="rankArt" role="img" aria-label="Rabbi Schlomo Goldstein rank artwork"></div>
-        <div class="rankOverlay"><span class="mono">Rank preview</span><strong id="visualRank">Associate</strong></div>
+        <div class="rankArtwork rank-intern rankSeatArt" id="rankArt" role="img" aria-label="Rabbi Schlomo Goldstein rank artwork"></div>
+        <div class="rankOverlay"><span class="mono">Rank preview</span><strong id="visualRank">Intern</strong></div>
       </div>
       <div class="rankCue mono" id="rankCue">Rank follows staked $GLDSTN</div>
     </div>
@@ -89,7 +89,7 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
       <div class="seatStatus mono"><i></i> Active seat</div>
       <h2>Rabbi Schlomo Goldstein</h2>
       <div class="seatNo mono">SEAT #0018</div>
-      <div class="rankCurrent mono"><i></i><span id="seatRankName">Associate</span></div>
+      <div class="rankCurrent mono"><i></i><span id="seatRankName">Intern</span></div>
       <div class="traits">Seeking Opportunities</div>
       <p class="seatCopy">Stake $GLDSTN to rank this Seat from Intern to Partner.</p>
       <div class="seatActions"><button class="btn btnSecondary" id="changeSeat">Change Seat</button><button class="btn btnGhost replayRank" id="replayRank">Preview ranks</button></div>
@@ -97,23 +97,23 @@ main{margin-left:var(--side);padding-top:34px}.shell{width:min(1160px,calc(100% 
   </section>
 
   <section class="stats" aria-label="Seat summary">
-    <div class="stat"><div class="statLabel mono">Rank</div><div class="statValue" id="rankValue">Associate</div><div class="statSub" id="rankNextTop">2,500 $GLDSTN to VP</div></div>
-    <div class="stat"><div class="statLabel mono">Staked</div><div class="statValue"><span id="stakedTop">12,500</span></div><div class="statSub">$GLDSTN assigned to Seat #18</div></div>
-    <div class="stat"><div class="statLabel mono">Mint capacity</div><div class="statValue" id="capacityValue">3 slots</div><div class="statSub">Prototype capacity · scales with rank</div></div>
+    <div class="stat"><div class="statLabel mono">Rank</div><div class="statValue" id="rankValue">Intern</div><div class="statSub" id="rankNextTop">1,000 $GLDSTN to Analyst</div></div>
+    <div class="stat"><div class="statLabel mono">Staked</div><div class="statValue"><span id="stakedTop">0</span></div><div class="statSub">$GLDSTN assigned to Seat #18</div></div>
+    <div class="stat"><div class="statLabel mono">Mint capacity</div><div class="statValue" id="capacityValue">1 slot</div><div class="statSub">Prototype capacity · scales with rank</div></div>
   </section>
 
   <section id="stake">
     <div class="sectionHead"><div><div class="eyebrow mono">Your position</div><h2>Stake to rank up.</h2></div><div class="sim mono">Prototype thresholds</div></div>
     <div class="positionGrid">
       <article class="stakeCard">
-        <div class="stakeTop"><div><b>$GLDSTN staked</b></div><div class="stakeAmount"><span id="stakedAmount">12,500</span><small>$GLDSTN</small></div></div>
-        <div class="progressWrap"><div class="progressLabels"><span id="rankLeft">Associate</span><span id="rankProgress">12,500 / 15,000</span><span id="rankRight">VP</span></div><div class="progress"><i id="progressBar"></i></div></div>
+        <div class="stakeTop"><div><b>$GLDSTN staked</b></div><div class="stakeAmount"><span id="stakedAmount">0</span><small>$GLDSTN</small></div></div>
+        <div class="progressWrap"><div class="progressLabels"><span id="rankLeft">Intern</span><span id="rankProgress">0 / 1,000</span><span id="rankRight">Analyst</span></div><div class="progress"><i id="progressBar"></i></div></div>
         <div class="rankMilestones" id="rankMilestones"></div>
         <div class="stakeForm"><input id="stakeInput" inputmode="decimal" placeholder="Amount in $GLDSTN" aria-label="Stake amount"><button class="btn btnGold" id="stakeBtn">Stake</button><button class="btn btnSecondary" id="unstakeBtn">Unstake</button></div>
       </article>
       <aside class="economicsCard" aria-label="Seat economics">
-        <div class="economic"><small class="mono">Fee share</small><strong id="feeTier">Associate tier</strong><span>Scales with rank.</span></div>
-        <div class="economic"><small class="mono">Gold salary</small><strong id="salaryTier">Associate tier</strong><span>Paid at the active rank.</span></div>
+        <div class="economic"><small class="mono">Fee share</small><strong id="feeTier">Intern tier</strong><span>Scales with rank.</span></div>
+        <div class="economic"><small class="mono">Gold salary</small><strong id="salaryTier">Intern tier</strong><span>Paid at the active rank.</span></div>
         <div class="economic"><small class="mono">Primary minting</small><strong>Enabled</strong><span>Mint G-Funds at NAV.</span></div>
       </aside>
     </div>
@@ -140,8 +140,8 @@ const ranks=[
   {key:'md',label:'MD',min:40000,next:100000,capacity:8},
   {key:'partner',label:'Partner',min:100000,next:null,capacity:12}
 ];
-let staked=Number(localStorage.getItem('goldsteinSeatStake')||12500);
-if(!Number.isFinite(staked)||staked<0)staked=12500;
+let staked=Number(localStorage.getItem('goldsteinSeatStakeV2')||0);
+if(!Number.isFinite(staked)||staked<0)staked=0;
 let previewTimer=null,previewReturn=null,actualRank=0;
 const toast=t=>{$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('toast').classList.remove('show'),1800)};
 const fmt=n=>Math.round(n).toLocaleString();
@@ -185,7 +185,7 @@ function renderStake(animate=true){
   }
   renderMilestones();
   if(!previewTimer&&!previewReturn)setVisualRank(actualRank,false);
-  localStorage.setItem('goldsteinSeatStake',String(staked));
+  localStorage.setItem('goldsteinSeatStakeV2',String(staked));
   if(animate&&previous!==actualRank)toast(`${r.label} rank unlocked · simulated.`);
 }
 function stopPreview(){
