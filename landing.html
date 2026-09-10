@@ -4,13 +4,19 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="theme-color" content="#080806" />
+<meta name="color-scheme" content="dark" />
 <meta name="robots" content="index,follow" />
 <title>Goldstein Group — The Investment Firm, Rebuilt Onchain</title>
 <meta name="description" content="Goldstein Group builds agent-managed tokenized funds and an onchain distribution network for the next generation of investment products." />
 <meta property="og:title" content="Goldstein Group — The Investment Firm, Rebuilt Onchain" />
 <meta property="og:description" content="Agent-managed tokenized funds. Onchain distribution. One firm built for internet capital markets." />
 <meta property="og:type" content="website" />
+<meta property="og:site_name" content="Goldstein Group" />
 <meta property="og:image" content="/assets/goldstein-hero.webp" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Goldstein Group — The Investment Firm, Rebuilt Onchain" />
+<meta name="twitter:description" content="Agent-managed tokenized funds. Onchain distribution. One firm built for internet capital markets." />
+<meta name="twitter:image" content="/assets/goldstein-hero.webp" />
 <link rel="icon" href="/assets/goldstein-keystone.png" />
 <style>
 :root{--bg:#070705;--bg2:#0b0b08;--panel:#11100b;--panel2:#0c0c08;--line:#2b2719;--line2:#413820;--gold:#d8b43f;--gold2:#f2cf4b;--gold3:#8f731e;--text:#f4f0e6;--muted:#aaa18d;--soft:#77705f;--green:#8fe3aa;--max:1240px;--shadow:0 28px 90px rgba(0,0,0,.32)}
@@ -28,21 +34,25 @@
 @media(max-width:760px){.wrap{width:calc(100% - 28px)}.siteHeader{height:68px}.logoLink{width:150px;height:50px;justify-items:start}.logoLink img{width:148px;max-height:48px}.desktopNav{display:none}.menuBtn{display:block}.mobileMenu{position:fixed;z-index:99;left:12px;right:12px;top:76px;padding:10px;border:1px solid #3b3320;border-radius:12px;background:rgba(12,12,8,.98);box-shadow:0 20px 60px rgba(0,0,0,.42)}.mobileMenu.show{display:grid;gap:5px}.mobileMenu a{padding:12px;border-radius:8px;text-decoration:none;color:#c9bea5;font-size:13px;font-weight:800}.mobileMenu a:last-child{background:#d8ad25;color:#130f02}.hero{padding:120px 0 66px}.hero h1{font-size:clamp(54px,16vw,82px)}.heroLead{font-size:16px}.heroGrid{gap:32px}.terminal{min-height:520px}.fundTerminal{width:285px;left:0}.seatTerminal{width:260px;right:0}.networkTerminal{width:215px;right:5px}.monolithMark{opacity:.68}.statGrid{grid-template-columns:1fr 1fr}.stat{min-height:128px}.section{padding:82px 0}.productGrid{grid-template-columns:1fr}.product.soon{grid-column:auto}.product{min-height:350px}.networkPanel{min-height:720px}.networkCenter{top:50%}.node{width:190px}.node.one{left:4%;top:6%}.node.two{right:4%;top:26%}.node.three{left:4%;bottom:27%}.node.four{right:4%;bottom:6%}.culture{padding:82px 0}.cultureFrame{min-height:650px;background-position:62% center}.cultureCopy{left:24px;right:24px;bottom:27px}.footerTop,.footerBottom{display:grid}.footerLinks{gap:18px}}
 @media(max-width:520px){.heroActions{display:grid}.primaryCta,.secondaryCta{width:100%}.terminal{min-height:600px}.fundTerminal{left:0;top:30px;width:88%;transform:none}.networkTerminal{right:0;top:250px;width:72%;transform:none}.seatTerminal{left:5%;right:auto;bottom:20px;width:82%;transform:none}.orbital,.monolithMark{display:none}.statGrid{grid-template-columns:1fr 1fr}.stat{padding:22px 18px}.stat strong{font-size:31px}.sectionTop h2,.modelCopy h2{font-size:45px}.networkPanel{min-height:820px}.networkCenter{width:145px;height:145px}.networkCenter:before{inset:-58px}.networkCenter:after{inset:-116px}.node{width:172px;padding:12px}.node.one{left:3%;top:5%}.node.two{right:3%;top:25%}.node.three{left:3%;bottom:25%}.node.four{right:3%;bottom:5%}.cultureCopy h2{font-size:48px}.cultureActions{display:grid}.cultureActions a{width:100%}.footerLinks{display:grid;grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.signalTrack,.orbital{animation:none}.revealOnScroll{opacity:1;transform:none;transition:none}}
+
+/* Public-site accessibility and interaction polish */
+.skipLink{position:fixed;z-index:1000;left:16px;top:12px;transform:translateY(-80px);padding:10px 13px;border:1px solid #e8c43f;border-radius:8px;background:#0e0d09;color:#f1d15a;text-decoration:none;font-size:12px;font-weight:850;transition:.16s}.skipLink:focus{transform:none}a:focus-visible,button:focus-visible{outline:2px solid #f0ca45;outline-offset:3px}.launch:focus-visible,.primaryCta:focus-visible{outline-color:#fff}.mobileMenu[aria-hidden="true"]{display:none}@media(max-width:760px){.mobileMenu[aria-hidden="false"]{display:grid}}
 </style>
 </head>
 <body>
+<a class="skipLink" href="#main">Skip to content</a>
 <header class="siteHeader" id="siteHeader">
   <div class="wrap headerInner">
     <a class="logoLink" href="/" aria-label="Goldstein Group home"><img src="/goldstein-logo-2.png.png" alt="Goldstein Group"></a>
     <nav class="desktopNav" aria-label="Primary">
       <a href="#funds">G-Funds</a><a href="#seats">Seats</a><a href="#network">Network</a><a href="#about">The Firm</a><a class="launch" href="/app">Launch App ↗</a>
     </nav>
-    <button class="menuBtn" id="menuBtn" aria-label="Open menu">☰</button>
+    <button class="menuBtn" id="menuBtn" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">☰</button>
   </div>
 </header>
-<nav class="mobileMenu" id="mobileMenu" aria-label="Mobile navigation"><a href="#funds">G-Funds</a><a href="#seats">Seats</a><a href="#network">Network</a><a href="#about">The Firm</a><a href="/app">Launch App ↗</a></nav>
+<nav class="mobileMenu" id="mobileMenu" aria-label="Mobile navigation" aria-hidden="true"><a href="#funds">G-Funds</a><a href="#seats">Seats</a><a href="#network">Network</a><a href="#about">The Firm</a><a href="/app">Launch App ↗</a></nav>
 
-<main>
+<main id="main">
 <section class="hero">
   <div class="heroGlow"></div>
   <div class="wrap heroGrid">
@@ -86,7 +96,7 @@
 (()=>{
 const header=document.getElementById('siteHeader'),menuBtn=document.getElementById('menuBtn'),menu=document.getElementById('mobileMenu');
 const onScroll=()=>header.classList.toggle('scrolled',scrollY>20);onScroll();addEventListener('scroll',onScroll,{passive:true});
-menuBtn.addEventListener('click',()=>menu.classList.toggle('show'));menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>menu.classList.remove('show')));
+const setMenu=open=>{menu.classList.toggle('show',open);menu.setAttribute('aria-hidden',String(!open));menuBtn.setAttribute('aria-expanded',String(open));menuBtn.setAttribute('aria-label',open?'Close menu':'Open menu')};menuBtn.addEventListener('click',()=>setMenu(!menu.classList.contains('show')));menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));document.addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false)});
 const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.revealOnScroll').forEach(el=>io.observe(el));
 })();
 </script>
