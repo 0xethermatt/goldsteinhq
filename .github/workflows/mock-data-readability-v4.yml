@@ -1,0 +1,76 @@
+name: Mock data and readability v4
+
+on:
+  push:
+    paths:
+      - '.github/workflows/mock-data-readability-v4.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Apply mock data and readability upgrade
+        run: python3 scripts/mock_data_readability_v4.py
+
+      - name: Validate mock data and interactive composition
+        run: |
+          grep -q 'Interactive mock fund model v4' fund-detail.html
+          grep -q 'compositionSvg' fund-detail.html
+          grep -q '\$6.84M' fund-detail.html
+          grep -q '32.4%' fund-detail.html
+          grep -q 'Mock data controller v4' funds.html
+          grep -q '\$2.31M' funds.html
+          grep -q 'mock market & portfolio data' fund-detail.html
+          grep -q 'mock market & portfolio data' funds.html
+
+      - name: Validate site-wide font floor
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          files=['index.html','landing.html','app.html','welcome.html','my-seat.html','funds.html','fund-detail.html']
+          bad=[]
+          for name in files:
+              s=Path(name).read_text()
+              for m in re.finditer(r'font-size\s*:\s*(\d+(?:\.\d+)?)px',s):
+                  n=float(m.group(1))
+                  if 0 < n < 11: bad.append((name,m.group(0)))
+              for m in re.finditer(r'font\s*:[^;{}]+',s):
+                  px=re.search(r'(\d+(?:\.\d+)?)px',m.group(0))
+                  if px and 0 < float(px.group(1)) < 11: bad.append((name,m.group(0)))
+              if '/* Site-wide type floor v4 */' not in s: bad.append((name,'missing type floor marker'))
+          if bad:
+              raise SystemExit('Unreadably small CSS remains: '+repr(bad[:20]))
+          print('Font floor verified across',len(files),'rendered HTML files')
+          PY
+
+      - name: JavaScript syntax check
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess, tempfile, os
+          files=['index.html','landing.html','app.html','welcome.html','my-seat.html','funds.html','fund-detail.html']
+          for name in files:
+              s=Path(name).read_text()
+              for i,b in enumerate(re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,re.S)):
+                  f=tempfile.NamedTemporaryFile('w',suffix='.js',delete=False)
+                  f.write(b);f.close()
+                  try: subprocess.run(['node','--check',f.name],check=True)
+                  finally: os.unlink(f.name)
+          print('JavaScript syntax verified')
+          PY
+
+      - name: Commit v4 prototype upgrade
+        run: |
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html landing.html app.html welcome.html my-seat.html funds.html fund-detail.html
+          git commit -m "Add realistic mock data and improve site readability" || exit 0
+          git push
