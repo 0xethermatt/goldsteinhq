@@ -1,0 +1,59 @@
+name: Apply landing visual narrative v2
+
+on:
+  push:
+    paths:
+      - '.deploy-landing-visual-v2'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply landing redesign
+        run: python scripts/landing_visual_v2.py
+
+      - name: Validate output
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ('index.html','landing.html'):
+              text = Path(name).read_text()
+              required = [
+                  'Landing visual narrative v2',
+                  'class="firmVisual revealOnScroll"',
+                  'id="firm-roster"',
+                  '/assets/goldstein-hero.webp',
+                  '/18.png', '/b10.png', '/b17.png',
+                  'A network with faces, roles and products.',
+                  'gAIX house manager', 'gMEMESTONK manager',
+              ]
+              missing = [x for x in required if x not in text]
+              if missing:
+                  raise SystemExit(f'{name} missing: {missing}')
+              if 'Goldstein product preview' in text:
+                  raise SystemExit(f'{name}: old terminal hero still present')
+              if text.count('id="firm-roster"') != 1:
+                  raise SystemExit(f'{name}: duplicate firm roster')
+          print('Landing visual QA passed')
+          PY
+          git diff --check
+
+      - name: Commit changes
+        run: |
+          if git diff --quiet -- index.html landing.html; then
+            echo "No landing changes required"
+            exit 0
+          fi
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html landing.html
+          git commit -m "Bring Goldstein landing page to life with firm imagery"
+          git push
