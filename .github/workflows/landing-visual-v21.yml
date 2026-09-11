@@ -1,0 +1,58 @@
+name: Apply landing visual narrative v2.1
+
+on:
+  push:
+    paths:
+      - '.deploy-landing-visual-v21'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply polish pass
+        run: python scripts/landing_visual_v21.py
+
+      - name: Validate output
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ('index.html','landing.html'):
+              text = Path(name).read_text()
+              checks = [
+                  '<div class="eyebrow">01 / Products</div>',
+                  '<div class="eyebrow">02 / People</div>',
+                  '<div class="eyebrow">03 / Operating model</div>',
+                  '<div class="eyebrow">04 / Network</div>',
+                  'House managers operate the mandates',
+                  'House fund manager</small>',
+              ]
+              missing = [x for x in checks if x not in text]
+              if missing:
+                  raise SystemExit(f'{name} missing {missing}')
+              if text.index('id="funds"') > text.index('id="firm-roster"'):
+                  raise SystemExit(f'{name}: roster must follow products')
+              if text.index('id="firm-roster"') > text.index('id="seats"'):
+                  raise SystemExit(f'{name}: roster must precede operating model')
+          print('Narrative order QA passed')
+          PY
+          git diff --check
+
+      - name: Commit changes
+        run: |
+          if git diff --quiet -- index.html landing.html; then
+            echo "No changes required"
+            exit 0
+          fi
+          git config user.name "Goldstein UI Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html landing.html
+          git commit -m "Polish Goldstein landing narrative and visual flow"
+          git push
